@@ -20,10 +20,10 @@ export const securePassword = async (password: string) => {
 export const create_token = async (id: string, req: Request, res: Response) => {
   try {
     const token = await jwt.sign({ _id: id }, process.env.JWT_SECRET_KEY);
-    return res.cookie("access_token", token, {
-      httpOnly: true,
-      expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
-    });
+    // return res.cookie("access_token", token, {
+    //   httpOnly: true,
+    //   expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
+    // });
     return token;
   } catch (error: any) {
     res.status(400).send(error.message);
@@ -67,7 +67,8 @@ export const registerUserService = async (
   email: string,
   password: string,
   mobile: string,
-  company: string
+  company: string,
+  role: string
 ) => {
   const user = await users.findOne({ email });
   if (user) throw new Error("User already exists");
@@ -82,6 +83,7 @@ export const registerUserService = async (
     password: hashedPassword,
     mobile,
     company,
+    role,
   });
   await newUser.save();
   return newUser;
