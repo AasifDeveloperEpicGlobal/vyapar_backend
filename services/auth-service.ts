@@ -24,6 +24,7 @@ export const create_token = async (id: string, req: Request, res: Response) => {
       httpOnly: true,
       expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
     });
+    return token;
   } catch (error: any) {
     res.status(400).send(error.message);
   }
@@ -50,14 +51,14 @@ export const loginService = async (
     mobile: user.mobile,
     company: user.company,
   };
-  // const response = {
-  //   success: true,
-  //   data: payload,
-  //   message: "Login successful",
-  // };
-  // res.status(200).send(response);
   const token = signJWT(payload);
-  return token;
+  return res
+    .cookie("access_token", token, {
+      httpOnly: true,
+      expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
+    })
+    .status(200)
+    .send({ success: true, data: payload, message: "Login successful" });
 };
 
 // register user service
@@ -70,19 +71,18 @@ export const registerUserService = async (
 ) => {
   const user = await users.findOne({ email });
   if (user) throw new Error("User already exists");
+
   if (!name || !email || !password || !mobile || !company)
     throw new Error("Please fill all fields");
 
   const hashedPassword = await bcryptjs.hash(password, 10);
-
   const newUser = new users({
     name,
     email,
     password: hashedPassword,
     mobile,
-    company
+    company,
   });
-
   await newUser.save();
   return newUser;
 };

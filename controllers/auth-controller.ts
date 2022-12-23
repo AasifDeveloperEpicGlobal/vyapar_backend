@@ -1,12 +1,12 @@
 import { Request, Response } from "express";
-import users from "../models/users";
 import {
   create_token,
   loginService,
   registerUserService,
-  securePassword,
+  signJWT,
 } from "../services/auth-service";
 const bcryptjs = require("bcryptjs");
+import users from "../models/users";
 
 // register user controller start
 export const handleRegisterController = async (req: Request, res: Response) => {
@@ -34,16 +34,32 @@ export const handleRegisterController = async (req: Request, res: Response) => {
 export const handleLoginController = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
-    const token = await loginService(email, password, req, res);
+    if (!email || !password) throw new Error("Please fill all fields");
+
+    const user = await users.findOne({ email });
+    if (!user) throw new Error("User not found");
+
+    const isMatch = await bcryptjs.compare(password, user.password);
+    if (!isMatch) throw new Error("Invalid credentials");
+
+    const payload = {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      password: user.password,
+      mobile: user.mobile,
+      company: user.company,
+    };
+    const token = signJWT(payload);
     return res
       .cookie("access_token", token, {
         httpOnly: true,
-        expires: new Date(Date.now() + 24 * 60 * 60 * 1000)
+        expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
       })
       .status(200)
-      .json({ success: true, message: "Login successful" });
+      .send({ success: true, data: payload, message: "Login successful" });
   } catch (error: any) {
-    res.status(400).json({ error: error.message });
+    res.status(500).json({ error: error.message });
   }
 };
 //login controller end
