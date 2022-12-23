@@ -16,51 +16,6 @@ export const securePassword = async (password: string) => {
   return passwordHash;
 };
 
-//create token
-export const create_token = async (id: string, req: Request, res: Response) => {
-  try {
-    const token = await jwt.sign({ _id: id }, process.env.JWT_SECRET_KEY);
-    // return res.cookie("access_token", token, {
-    //   httpOnly: true,
-    //   expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
-    // });
-    return token;
-  } catch (error: any) {
-    res.status(400).send(error.message);
-  }
-};
-
-//login service
-export const loginService = async (
-  email: string,
-  password: string,
-  req: Request,
-  res: Response
-) => {
-  const user = await users.findOne({ email });
-  if (!user) throw new Error("User not found");
-
-  const isMatch = await bcryptjs.compare(password, user.password);
-  if (!isMatch) throw new Error("Invalid credentials");
-
-  const payload = {
-    id: user._id,
-    name: user.name,
-    email: user.email,
-    password: user.password,
-    mobile: user.mobile,
-    company: user.company,
-  };
-  const token = signJWT(payload);
-  return res
-    .cookie("access_token", token, {
-      httpOnly: true,
-      expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
-    })
-    .status(200)
-    .send({ success: true, data: payload, message: "Login successful" });
-};
-
 // register user service
 export const registerUserService = async (
   name: string,

@@ -27,7 +27,7 @@ export const handleRegisterController = async (req: Request, res: Response) => {
 };
 // register user controller end
 
-//login controller start
+//user login controller start
 export const handleLoginController = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
