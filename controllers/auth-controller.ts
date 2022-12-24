@@ -1,5 +1,8 @@
 import { Request, Response } from "express";
-import { registerUserService } from "../services/auth-service";
+import {
+  registerAdminService,
+  registerUserService,
+} from "../services/auth-service";
 const bcryptjs = require("bcryptjs");
 import users from "../models/users";
 const jwt = require("jsonwebtoken");
@@ -50,7 +53,7 @@ export const handleLoginController = async (req: Request, res: Response) => {
                 httpOnly: true,
                 expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
               })
-              .send({ success:true, user, message:"Login successful" });
+              .send({ success: true, user, message: "Login successful" });
             // res.send({ user, auth: token });
           }
         );
@@ -63,5 +66,42 @@ export const handleLoginController = async (req: Request, res: Response) => {
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }
- };
+};
 //login controller end
+
+// register admin controller start
+export const handleRegisterAdminController = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const { name, email, password, mobile, company, role } = req.body;
+    const admin = await registerAdminService(
+      name,
+      email,
+      password,
+      mobile,
+      company,
+      role
+    );
+    return res.status(200).json({
+      success: true,
+      admin,
+      message: "Registration successfully..",
+    });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+};
+//register admin controller end
+
+// logout start
+export const handleLogoutController = async (req: Request, res: Response) => {
+  try {
+    res.clearCookie("access_token");
+    res.status(200).json({ success: true, message: "Logout successful" });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+};
+//logout end

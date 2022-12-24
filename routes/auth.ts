@@ -1,18 +1,17 @@
-import { Router, Request, Response } from "express";
+import { Router } from "express";
 import {
   handleLoginController,
+  handleLogoutController,
+  handleRegisterAdminController,
   handleRegisterController,
 } from "../controllers/auth-controller";
-import { verifyToken } from "../middlewares/utils";
 
 const router = Router();
 
 //register user router
 router.post("/register-user", handleRegisterController);
 router.post("/login", handleLoginController);
-
-router.get("/text", verifyToken, function (req: Request, res: Response) {
-  res.status(200).send({ success: true, message: "Authenticated" });
-});
+router.post("/register-admin", handleRegisterAdminController);
+router.post("/logout", handleLogoutController);
 
 export default router;

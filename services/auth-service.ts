@@ -43,3 +43,33 @@ export const registerUserService = async (
   await newUser.save();
   return newUser;
 };
+
+//register admin service
+export const registerAdminService = async (
+  name: string,
+  email: string,
+  password: string,
+  mobile: string,
+  company: string,
+  role: string
+) => {
+  const admin = await users.findOne({ email });
+  if (admin) throw new Error("User already exists");
+
+  if (!name || !email || !password || !mobile || !company)
+    throw new Error("Please fill all fields");
+
+  const hashedPassword = await bcryptjs.hash(password, 10);
+
+  const newAdmin = new users({
+    name,
+    email,
+    password: hashedPassword,
+    mobile,
+    company,
+    role: "admin",
+  });
+
+  await newAdmin.save();
+  return newAdmin;
+};

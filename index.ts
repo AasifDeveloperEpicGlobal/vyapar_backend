@@ -1,6 +1,6 @@
 import "dotenv/config";
 import express, { Express } from "express";
-import { createServer } from "http";
+import { createServer, Server } from "http";
 import cors from "cors";
 import { databaseConnect } from "./config/database";
 const mongoose = require("mongoose");
@@ -14,10 +14,14 @@ const server = createServer(app);
 const port = process.env.PORT;
 databaseConnect();
 app.use(express.json({ limit: "50mb" }));
-app.use(express.urlencoded({ limit: "50mb", extended: true }));
+app.use(express.urlencoded({ limit: "50mb", extended: true }));
+
+// PORT LISTEN
+server.listen(port, () => {
+  console.log(`Server Runnig http://localhost:${port}`);
+});
 
 // MIDDLEWARES
-
 // app.disable("x-powered-by");
 // app.use(express.json({ limit: "50mb" }));
 // app.use(express.urlencoded({ limit: "50mb", extended: true }));
@@ -42,10 +46,3 @@ app.get("/api", (req, res) => {
 app.use("/api/auth", authRoutes);
 
 // app.use("/api/beds", testRoutes);
-
-// PORT LISTEN
-server.listen(port, () => {
-  console.log(`Server Runnig http://localhost:${port}`);
-});
-
-
