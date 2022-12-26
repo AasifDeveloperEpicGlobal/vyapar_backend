@@ -5,8 +5,14 @@ import cors from "cors";
 import { databaseConnect } from "./config/database";
 const mongoose = require("mongoose");
 import authRoutes from "./routes/auth";
+import partyRoutes from "./routes/parties";
+import { stateData } from "./state";
+const State = require("state");
 
 mongoose.set("strictQuery", false);
+// console.log(stateData);
+console.log(State.state);
+
 
 // INITIALIZING EXPREESS
 const app: Express = express();
@@ -44,5 +50,7 @@ app.get("/api", (req, res) => {
 
 // Signup and login routes
 app.use("/api/auth", authRoutes);
+app.use("/api/parties", partyRoutes);
+
 
 // app.use("/api/beds", testRoutes);

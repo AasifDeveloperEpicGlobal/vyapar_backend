@@ -16,6 +16,16 @@ export const securePassword = async (password: string) => {
   return passwordHash;
 };
 
+//VERIFY JWT
+export const verifyJWT = (token: string) => {
+  return jwt.verify(token, process.env.JWT_SECRET_KEY as any);
+};
+
+//DECODE JWT
+export const decodeJWT = (token: string) => {
+  return jwt.decode(token);
+};
+
 // register user service
 export const registerUserService = async (
   name: string,
