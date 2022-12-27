@@ -17,6 +17,8 @@ const userSchema = new Schema<IUser>({
   email: {
     type: String,
     required: true,
+    validate: /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/,
+    unique: true,
   },
   password: {
     type: String,
@@ -25,6 +27,13 @@ const userSchema = new Schema<IUser>({
   mobile: {
     type: String,
     required: true,
+    validate: {
+      validator: function (v: any) {
+        var re = /^\d{10}$/;
+        return !v || !v.trim().length || re.test(v);
+      },
+      message: "Provided phone number is invalid.",
+    },
   },
   company: {
     type: String,

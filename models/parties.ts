@@ -9,12 +9,26 @@ const partySchema = new Schema(
     gstin: {
       type: String,
       required: true,
+      validate: {
+        validator: function (v: any) {
+          var re = /\d{2}[A-Z]{5}\d{4}[A-Z]{1}[A-Z\d]{1}[Z]{1}[A-Z\d]{1}/;
+          return !v || !v.trim().length || re.test(v);
+        },
+        message: "Provided gstin number is invalid.",
+      },
     },
-    number: {
+    mobile: {
       type: String,
       required: true,
+      validate: {
+        validator: function (v: any) {
+          var re = /^\d{10}$/;
+          return !v || !v.trim().length || re.test(v);
+        },
+        message: "Provided phone number is invalid.",
+      },
     },
-    unregistercustomer: [
+    unregisteredcustomer: [
       {
         type: String,
         required: false,
@@ -23,10 +37,16 @@ const partySchema = new Schema(
     state: [
       {
         type: String,
-        required: false,
+        required: true,
       },
     ],
     email: {
+      type: String,
+      required: true,
+      validate: /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/,
+      unique: true,
+    },
+    address: {
       type: String,
       required: true,
     },
