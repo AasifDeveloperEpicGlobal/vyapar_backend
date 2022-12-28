@@ -1,10 +1,15 @@
 import { Request, Response } from "express";
 import { isValidObjectId } from "mongoose";
 import parties from "../models/parties";
-import { deletePartyService, getAllPartiesService, getPartiesByIdService } from "../services/parties-service";
-
+import {
+  deletePartyService,
+  getAllPartiesService,
+  getPartiesByIdService,
+} from "../services/parties-service";
+import State from "../models/state";
 export const handlePartyController = async (req: Request, res: Response) => {
-  const { name, gstin, mobile, unregisteredcustomer, state, email, address } = req.body;
+  const { name, gstin, mobile, unregisteredcustomer, state, email, address } =
+    req.body;
   if (!name || !gstin || !mobile || !email || !state || !address) {
     return res.status(400).json({ message: "All fields are required" });
   }
@@ -32,7 +37,7 @@ export const handlePartyController = async (req: Request, res: Response) => {
       .status(400)
       .json({ message: "GSTIN already exists, Enter a unique GSTIN" });
   }
-
+  const stateId = await State.find();
   try {
     const createParties = await parties.create({
       name,
@@ -41,7 +46,7 @@ export const handlePartyController = async (req: Request, res: Response) => {
       unregisteredcustomer: Array.isArray(unregisteredcustomer)
         ? unregisteredcustomer
         : undefined,
-      state: Array.isArray(state) ? state : undefined,
+      state: stateId,
       email,
       address,
     });
@@ -52,7 +57,9 @@ export const handlePartyController = async (req: Request, res: Response) => {
   }
 };
 
-{/* get all parties controller */ }
+{
+  /* get all parties controller */
+}
 export const handleAllPartyController = async (req: Request, res: Response) => {
   try {
     const response = await getAllPartiesService();
@@ -62,58 +69,87 @@ export const handleAllPartyController = async (req: Request, res: Response) => {
   }
 };
 
-{/* get parties by id controller */ }
-export const handlePartyByIdController =async (req: Request, res: Response) => {
+{
+  /* get parties by id controller */
+}
+export const handlePartyByIdController = async (
+  req: Request,
+  res: Response
+) => {
   try {
     const { id } = req.params;
-    if(!id){
-      return res.status(400).send({success:false, message:"ID is required."});
+    if (!id) {
+      return res
+        .status(400)
+        .send({ success: false, message: "ID is required." });
     }
 
-    if(!isValidObjectId(id)){
-      return res.status(400).send({success:false, message:"Invalid Id provided."});
+    if (!isValidObjectId(id)) {
+      return res
+        .status(400)
+        .send({ success: false, message: "Invalid Id provided." });
     }
     const response = await getPartiesByIdService(req.params.id);
     res.status(200).send({ response });
-  } catch (error:any) {
+  } catch (error: any) {
     res.status(400).send({ error: error.message });
   }
-}
+};
 
-{/* delete parties by id controller*/ }
-export const handleDeletePartyController =async (req: Request, res: Response) => {
+{
+  /* delete parties by id controller*/
+}
+export const handleDeletePartyController = async (
+  req: Request,
+  res: Response
+) => {
   try {
     const { id } = req.params;
-    if(!id){
-      return res.status(400).send({success:false, message:"ID is required."});
+    if (!id) {
+      return res
+        .status(400)
+        .send({ success: false, message: "ID is required." });
     }
 
-    if(!isValidObjectId(id)){
-      return res.status(400).send({success:false, message:"Invalid Id provided."});
+    if (!isValidObjectId(id)) {
+      return res
+        .status(400)
+        .send({ success: false, message: "Invalid Id provided." });
     }
     const deleteParty = await deletePartyService(req.params.id);
     res.status(200).send({ deleteParty });
-  } catch (error:any) {
+  } catch (error: any) {
     res.status(400).send({ error: error.message });
   }
-}
+};
 
-{/* update parties by id controller*/ }
-export const handleUpdatePartyController =async (req:Request, res:Response) => {
+{
+  /* update parties by id controller*/
+}
+export const handleUpdatePartyController = async (
+  req: Request,
+  res: Response
+) => {
   try {
     const { id } = req.params;
-    if(!id){
-      return res.status(400).send({success:false, message:"ID is required."});
+    if (!id) {
+      return res
+        .status(400)
+        .send({ success: false, message: "ID is required." });
     }
 
-    if(!isValidObjectId(id)){
-      return res.status(400).send({success:false, message:"Invalid Id provided."});
+    if (!isValidObjectId(id)) {
+      return res
+        .status(400)
+        .send({ success: false, message: "Invalid Id provided." });
     }
     const updateParty = await parties.findByIdAndUpdate(
-      req.params.id, {$set: req.body}, {new:true}
-      );
+      req.params.id,
+      { $set: req.body },
+      { new: true }
+    );
     res.status(200).send({ updateParty });
-  } catch (error:any) {
+  } catch (error: any) {
     res.status(400).send({ error: error.message });
   }
-}
+};

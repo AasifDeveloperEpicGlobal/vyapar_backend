@@ -1,6 +1,20 @@
 import { model, Schema } from "mongoose";
 
-const partySchema = new Schema(
+export interface PartySchema extends Document {
+  name: string;
+  gstin: string;
+  mobile: string;
+  unregisteredcustomer: string;
+  state: [
+    {
+      _id: string;
+    }
+  ];
+  email: string;
+  address: string;
+}
+
+const partySchema = new Schema<PartySchema>(
   {
     name: {
       type: String,
@@ -36,8 +50,8 @@ const partySchema = new Schema(
     ],
     state: [
       {
-        type: String,
-        required: true,
+        type: Schema.Types.ObjectId,
+        ref: "states",
       },
     ],
     email: {
@@ -56,4 +70,4 @@ const partySchema = new Schema(
   }
 );
 
-export default model("parties", partySchema);
+export default model<PartySchema>("parties", partySchema);
