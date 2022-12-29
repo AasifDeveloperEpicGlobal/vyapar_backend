@@ -4,7 +4,8 @@ import parties from "../models/parties";
 import {
   deletePartyService,
   getAllPartiesService,
-  getPartiesByIdService,
+  getAllStateService,
+  getPartiesByIdService
 } from "../services/parties-service";
 import State from "../models/state";
 export const handlePartyController = async (req: Request, res: Response) => {
@@ -132,6 +133,7 @@ export const handleUpdatePartyController = async (
 ) => {
   try {
     const { id } = req.params;
+    const payload = req.body;
     if (!id) {
       return res
         .status(400)
@@ -148,8 +150,19 @@ export const handleUpdatePartyController = async (
       { $set: req.body },
       { new: true }
     );
+
     res.status(200).send({ updateParty });
   } catch (error: any) {
     res.status(400).send({ error: error.message });
   }
 };
+
+{/* get parties state controller*/ }
+export const handlePartystateController =async (req:Request, res:Response) => {
+  try {
+      const response = await getAllStateService();
+      res.status(200).send({success:true, message:"State data", data:response});
+  } catch (error:any) {
+      res.status(500).send({success:false, message:"Something went wrong!!"});
+  }
+}

@@ -78,9 +78,32 @@ export const isAuthenticated = async (
   }
 };
 
-export const isAdmin = (req: Request, res: Response, next: NextFunction) => {
+export const isUser = (req: Request, res: Response, next: NextFunction) => {
   const token = req.headers["authorization"];
   console.log({ token });
+  if (!token) {
+    return res.status(401).json({
+      success: false,
+      message: "Full authentication is required to access the resource",
+    });
+  }
+  try {
+    const verify = verifyJWT(token);
+    if (!verify) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    const decoded = decodeJWT(token) as any;
+    if (decoded?.user?.role !== "user") {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    next();
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const isAdmin = (req: Request, res: Response, next: NextFunction) => {
+  const token = req.headers["authorization"];
   if (!token) {
     return res.status(401).json({
       success: false,

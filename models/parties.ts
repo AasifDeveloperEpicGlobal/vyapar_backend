@@ -36,7 +36,7 @@ const partySchema = new Schema(
     ],
     state: [
       {
-        type: Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId, String,
         ref: "states",
       },
     ],
@@ -45,6 +45,7 @@ const partySchema = new Schema(
       required: true,
       validate: /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/,
       unique: true,
+      lowercase: true,
     },
     address: {
       type: String,

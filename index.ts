@@ -8,7 +8,6 @@ import authRoutes from "./routes/auth";
 import partyRoutes from "./routes/parties";
 import itemsRoutes from "./routes/items";
 import stateRoutes from "./routes/state";
-import unitRoutes from "./routes/unit";
 
 mongoose.set("strictQuery", false);
 
@@ -52,6 +51,5 @@ app.use("/api/auth", authRoutes);
 app.use("/api/parties", partyRoutes);
 app.use("/api/items", itemsRoutes);
 app.use("/api/state", stateRoutes);
-app.use("/api/item", unitRoutes);
 
 // app.use("/api/beds", testRoutes);

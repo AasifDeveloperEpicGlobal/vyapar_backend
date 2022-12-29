@@ -1,4 +1,15 @@
 import parties from "../models/parties";
+import state from "../models/state";
+
+interface updatePartyPayload{
+  name:string;
+  gstin:string;
+  mobile:string;
+  unregisteredcustomer: string[];
+  state: string[];
+  email: string;
+  address: string;
+}
 
 {/* get all parties service */ }
 export const getAllPartiesService = async () => {
@@ -16,4 +27,10 @@ export const getPartiesByIdService =async (id:string) => {
 export const deletePartyService =async (id:string) => {
  const deleteParty = await parties.findByIdAndDelete(id);
  return deleteParty;   
+}
+
+{/* get parties state service */ }
+export const getAllStateService =async () => {
+  const response = await state.find();
+  return response;
 }

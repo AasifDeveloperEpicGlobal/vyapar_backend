@@ -1,8 +1,8 @@
 import { Router } from "express";
-import { handlePartystateController } from "../controllers/state-controller";
+import { handlePartystateController } from "../controllers/parties-controller";
 const router = Router();
 
 // parties state routes
-router.get("/party-state", handlePartystateController);
+router.get("/", handlePartystateController);
 
 export default router;

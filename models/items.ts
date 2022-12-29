@@ -5,6 +5,15 @@ export interface Items extends Document {
   code: string;
   avatar: string;
   unit: string;
+  hsn: number;
+
+  saleAmount: number;
+  saleTaxAmount: number;
+  purchaseAmount: number;
+  purchaseTaxAmount: number;
+  discOnSaleAmount: number;
+  percentage: number;
+  noneTax: number;
 }
 
 const userSchema = new Schema<Items>(
@@ -16,7 +25,6 @@ const userSchema = new Schema<Items>(
     code: {
       type: String,
       required: true,
-      unique: true,
     },
     avatar: {
       type: String,
@@ -28,6 +36,41 @@ const userSchema = new Schema<Items>(
         ref: "units",
       },
     ],
+    hsn: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "hsns",
+        unique: true,
+      },
+    ],
+    saleAmount: {
+      type: Number,
+      required: true,
+    },
+    saleTaxAmount: {
+      type: Number,
+      required: false,
+    },
+    purchaseAmount: {
+      type: Number,
+      required: false,
+    },
+    purchaseTaxAmount: {
+      type: Number,
+      required: false,
+    },
+    discOnSaleAmount: {
+      type: Number,
+      required: false,
+    },
+    percentage: {
+      type: Number,
+      required: false,
+    },
+    noneTax: {
+      type: Number,
+      required: false,
+    },
   },
   {
     timestamps: true,
