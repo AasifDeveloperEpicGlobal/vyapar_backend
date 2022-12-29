@@ -8,9 +8,9 @@ import {
 } from "../services/parties-service";
 import State from "../models/state";
 export const handlePartyController = async (req: Request, res: Response) => {
-  const { name, gstin, mobile, unregisteredcustomer, state, email, address } =
+  const { name, gstin, mobile, unregisteredcustomer, email, address } =
     req.body;
-  if (!name || !gstin || !mobile || !email || !state || !address) {
+  if (!name || !gstin || !mobile || !email || !address) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
@@ -37,7 +37,7 @@ export const handlePartyController = async (req: Request, res: Response) => {
       .status(400)
       .json({ message: "GSTIN already exists, Enter a unique GSTIN" });
   }
-  const stateId = await State.find();
+  const stateId = await State.findOne({});
   try {
     const createParties = await parties.create({
       name,

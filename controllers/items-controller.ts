@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import items from "../models/items";
+import unit from "../models/unit";
 
 // item controller
 export const handleItemController = async (req: Request, res: Response) => {
@@ -11,18 +12,23 @@ export const handleItemController = async (req: Request, res: Response) => {
   }
 
   //check code validation
-  const itemCode = await items.findOne({code});
-  if(itemCode){
+  const itemCode = await items.findOne({ code });
+  if (itemCode) {
     return res
       .status(400)
-      .json({ success:false, message: "Item code already exists, Enter a unique code" });
+      .json({
+        success: false,
+        message: "Item code already exists, Enter a unique code",
+      });
   }
+
+  const units = await unit.findOne({});
 
   try {
     const item = new items({
       name: req.body.name,
       code: req.body.code,
-      unit:req.body.unit,
+      unit: units,
     });
     if (!req.file) {
       return res.status(400).send({
