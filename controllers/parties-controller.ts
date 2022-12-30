@@ -64,15 +64,13 @@ export const handlePartyController = async (req: Request, res: Response) => {
 export const handleAllPartyController = async (req: Request, res: Response) => {
   try {
     const response = await getAllPartiesService();
-    res.status(200).send({ response });
+    res.status(200).send({ success: true, response });
   } catch (error: any) {
     res.status(400).send({ error: error.message });
   }
 };
 
-{
-  /* get parties by id controller */
-}
+{/* get parties by id controller */}
 export const handlePartyByIdController = async (
   req: Request,
   res: Response
@@ -133,7 +131,6 @@ export const handleUpdatePartyController = async (
 ) => {
   try {
     const { id } = req.params;
-    const payload = req.body;
     if (!id) {
       return res
         .status(400)

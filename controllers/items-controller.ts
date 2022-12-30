@@ -1,27 +1,22 @@
 import { Request, Response } from "express";
+import { isValidObjectId } from "mongoose";
 import hsn from "../models/hsn";
 import items from "../models/items";
 import unit from "../models/unit";
-import { getAllUnitService, getItemHsnService } from "../services/item-service";
+import { deleteItemService, getAllItemService, getAllUnitService, getItemByIdService, getItemHsnService } from "../services/item-service";
 
-// item controller
+// item controller start 
 export const handleItemController = async (req: Request, res: Response) => {
-  const {
-    name,
-    code,
-    saleAmount,
-    saleTaxAmount,
-    discOnSaleAmount,
-    purchaseAmount,
-    purchaseTaxAmount,
-    percentage,
-    noneTax,
-  } = req.body;
-  if (!name || !code || !saleAmount) {
+  const { name, code, saleAmount, saleTaxAmount } = req.body;
+  if (!name || !code || !saleAmount || !saleTaxAmount) {
     return res
       .status(400)
       .json({ success: false, message: "All fields are required" });
   }
+  // saleAmount - 500
+  // saleTaxAmount -5% GST
+  // newAmont should be 525
+  var newAmount = await (saleAmount * saleTaxAmount) / 100;
 
   //check code validation
   const itemCode = await items.findOne({ code });
@@ -32,10 +27,7 @@ export const handleItemController = async (req: Request, res: Response) => {
     });
   }
 
-  // get units
   const units = await unit.findOne({});
-
-  // get hsnCode
   const Itemhsn = await hsn.findOne({});
 
   try {
@@ -44,8 +36,7 @@ export const handleItemController = async (req: Request, res: Response) => {
       code: req.body.code,
       unit: units,
       hsn: Itemhsn,
-
-      saleAmount: req.body.saleAmount,
+      saleAmount: newAmount,
       saleTaxAmount: req.body.saleTaxAmount,
       purchaseAmount: req.body.purchaseAmount,
       purchaseTaxAmount: req.body.purchaseTaxAmount,
@@ -53,7 +44,6 @@ export const handleItemController = async (req: Request, res: Response) => {
       percentage: req.body.percentage,
       noneTax: req.body.noneTax,
     });
-    // const response = await createItem(req.body);
     if (!req.file) {
       return res.status(400).send({
         success: false,
@@ -74,6 +64,8 @@ export const handleItemController = async (req: Request, res: Response) => {
     res.status(500).send(error);
   }
 };
+// item controller end
+
 
 // item unit controller
 export const handleItemUnitController = async (req: Request, res: Response) => {
@@ -94,5 +86,98 @@ export const handleItemHsnController = async (req: Request, res: Response) => {
     res.status(200).send({ success: true, message: "Hsn Data", data: Itemhsn });
   } catch (error: any) {
     res.status(500).send({ success: false, message: "Something went wrong!!" });
+  }
+};
+
+
+{/* get all items controller */ }
+export const handleAllItemController = async (req: Request, res: Response) => {
+  try {
+    const response = await getAllItemService();
+    res.status(200).send({ success: true, response });
+  } catch (error: any) {
+    res.status(400).send({ error: error.message });
+  }
+}
+
+{/* get items by id controller */ }
+export const handleItemByIdController = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      return res
+        .status(400)
+        .send({ success: false, message: "ID is required." });
+    }
+
+    if (!isValidObjectId(id)) {
+      return res
+        .status(400)
+        .send({ success: false, message: "Invalid Id provided." });
+    }
+
+    const response = await getItemByIdService(req.params.id);
+    res.status(200).send({ response });
+  } catch (error: any) {
+    res.status(400).send({ error: error.message });
+  }
+}
+
+{/* delete items by id controller */ }
+export const deleteItemController = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      return res
+        .status(400)
+        .send({ success: false, message: "ID is required." });
+    }
+
+    if (!isValidObjectId(id)) {
+      return res
+        .status(400)
+        .send({ success: false, message: "Invalid Id provided." });
+    }
+    const deleteItem = await deleteItemService(id);
+    res.status(200).send({ success: true, message: "Item deleted Successful" })
+  } catch (error: any) {
+    res.status(400).send({ error: error.message });
+  }
+}
+{/* update items by id controller */ }
+export const handleUpdatePartyController = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      return res
+        .status(400)
+        .send({ success: false, message: "ID is required." });
+    }
+
+    if (!isValidObjectId(id)) {
+      return res
+        .status(400)
+        .send({ success: false, message: "Invalid Id provided." });
+    }
+    const updateParty = await items.findByIdAndUpdate(
+      req.params.id,
+      {
+        $set: {
+          name: req.body.name,
+          code: req.body.code,
+          saleAmount: req.body.saleAmount,
+          saleTaxAmount:req.body.saleTaxAmount,
+          avatar: req.file?.filename
+        }
+      },
+      { new: true }
+    );
+
+    res.status(200).send({ updateParty });
+  } catch (error: any) {
+    res.status(400).send({ error: error.message });
   }
 };

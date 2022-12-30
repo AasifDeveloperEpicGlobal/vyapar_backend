@@ -25,6 +25,7 @@ const userSchema = new Schema<Items>(
     code: {
       type: String,
       required: true,
+      unique:true,
     },
     avatar: {
       type: String,
@@ -49,7 +50,7 @@ const userSchema = new Schema<Items>(
     },
     saleTaxAmount: {
       type: Number,
-      required: false,
+      required: true,
     },
     purchaseAmount: {
       type: Number,
