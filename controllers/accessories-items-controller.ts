@@ -104,16 +104,10 @@ export const handleAllItemController = async (req: Request, res: Response) => {
 export const handleItemByIdController = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    if (!id) {
+    if (!id || !isValidObjectId(id)) {
       return res
-        .status(400)
-        .send({ success: false, message: "ID is required." });
-    }
-
-    if (!isValidObjectId(id)) {
-      return res
-        .status(400)
-        .send({ success: false, message: "Invalid Id provided." });
+      .status(400)
+      .send({ success: false, message: "Invalid Id provided." });
     }
 
     const response = await getItemByIdService(req.params.id);
@@ -169,7 +163,7 @@ export const handleUpdatePartyController = async (
           name: req.body.name,
           code: req.body.code,
           saleAmount: req.body.saleAmount,
-          saleTaxAmount:req.body.saleTaxAmount,
+          saleTaxAmount: req.body.saleTaxAmount,
           avatar: req.file?.filename
         }
       },
