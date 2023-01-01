@@ -36,3 +36,33 @@ export const resizeImageAndUpload = async (
     }
   };
   
+  // resizeIconAndUpload
+export const resizeIconAndUpload = async (
+  file: Express.Multer.File | undefined,
+  filename: string
+) => {
+  if (!file) throw Error("File not found");
+
+  //PATH CONFIG
+  const time = new Date().getTime();
+  const fileName = `${filename}-${time}.webp`;
+  const folderPath = path.join(__dirname, "../", "uploads", "icons");
+  const uploadPath = path.join(__dirname, "../", "uploads", "icons", fileName);
+
+  if (!fs.existsSync(folderPath)) {
+    fs.mkdirSync(folderPath, { recursive: true });
+  }
+
+  try {
+    await sharp(file.buffer)
+      .resize(200, 116, {
+        fit: "cover",
+      })
+      .webp({ quality: 70 })
+      .toFile(uploadPath);
+
+    return `${process.env.BASE_URL}/api/icons-image/${fileName}`;
+  } catch (error: any) {
+    throw Error(error?.message);
+  }
+};

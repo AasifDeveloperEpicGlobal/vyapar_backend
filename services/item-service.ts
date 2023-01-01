@@ -1,5 +1,5 @@
+import accessoriesItems from "../models/accessoriesItems";
 import hsn from "../models/hsn";
-import items from "../models/items";
 import unit from "../models/unit";
 
 interface yourItemPayload {
@@ -31,22 +31,22 @@ export const getItemHsnService = async () => {
 
 {/* get all item service */ }
 export const getAllItemService = async () => {
-    const response = await items.find({});
+    const response = await accessoriesItems.find({});
     return response;
 }
 
 {/* get item by id service */ }
 export const getItemByIdService = async (id: string) => {
-    const response = await items.findById(id)
+    const response = await accessoriesItems.findById(id)
     return response;
 }
 {/* delete item by id service */ }
 export const deleteItemService = async (id: string) => {
-    const deleteItem = await items.findByIdAndDelete(id);
+    const deleteItem = await accessoriesItems.findByIdAndDelete(id);
     return deleteItem;
 }
 {/* update item by id service */ }
 export const updateItemService = async (id: string, payload: yourItemPayload) => {
-    const updatedItem = await items.findByIdAndUpdate(id, payload, { new: true });
+    const updatedItem = await accessoriesItems.findByIdAndUpdate(id, payload, { new: true });
     return updatedItem;
 }

@@ -6,8 +6,10 @@ import { databaseConnect } from "./config/database";
 const mongoose = require("mongoose");
 import authRoutes from "./routes/auth";
 import partyRoutes from "./routes/parties";
-import itemsRoutes from "./routes/items";
 import stateRoutes from "./routes/state";
+import accessoriesItem from "./routes/accessoriesItem";
+import unitRoutes from "./routes/unit";
+import hsnRoutes from "./routes/hsn";
 
 mongoose.set("strictQuery", false);
 
@@ -49,7 +51,9 @@ app.get("/api", (req, res) => {
 // Signup and login routes
 app.use("/api/auth", authRoutes);
 app.use("/api/parties", partyRoutes);
-app.use("/api/items", itemsRoutes);
 app.use("/api/state", stateRoutes);
+app.use("/api/accessories", accessoriesItem);
+app.use("/api/unit", unitRoutes);
+app.use("/api/hsn", hsnRoutes);
 
 // app.use("/api/beds", testRoutes);
