@@ -1,6 +1,6 @@
 import { Router, Request, Response } from "express";
 import accessoriesItems from "../models/accessoriesItems";
-import { resizeIconAndUpload } from "../services/image-service";
+import { resizeImageAndUpload } from "../services/image-service";
 const router = Router();
 import upload from "../config/multer";
 import hsn from "../models/hsn";
@@ -15,7 +15,6 @@ import { rm } from "fs/promises";
 // CREATE ITEM
 router.post("/item", upload.single("image"), async (req, res) => {
   try {
-    console.log("running");
     let { name, code, saleAmount, saleTaxAmount } = req.body;
 
     if (!req.file) {
@@ -46,7 +45,7 @@ router.post("/item", upload.single("image"), async (req, res) => {
       });
     }
 
-    const getUrl = await resizeIconAndUpload(req.file, name);
+    const getUrl = await resizeImageAndUpload(req.file, name);
 
     const accessoriesIcon = new accessoriesItems({
       code: code,
@@ -72,7 +71,7 @@ router.get("/", handleAllItemController);
 router.get("/:id", handleItemByIdController);
 router.delete("/:id", deleteItemController);
 
-// UPDATE ICONS BY ID
+// UPDATE ITEMS BY ID
 router.put("/update/:id", upload.single("image"), async (req, res) => {
   const { id } = req.params;
   const file = req.file ? req.file : undefined;
@@ -90,7 +89,7 @@ router.put("/update/:id", upload.single("image"), async (req, res) => {
   }
 
   try {
-    const imageUrl = await resizeIconAndUpload(req.file, name);
+    const imageUrl = await resizeImageAndUpload(req.file, name);
     await accessoriesItems
       .findOneAndUpdate(
         { _id: id },

@@ -5,6 +5,7 @@ import {
 } from "../services/auth-service";
 const bcryptjs = require("bcryptjs");
 import users from "../models/users";
+import { isValidObjectId } from "mongoose";
 const jwt = require("jsonwebtoken");
 
 // register user controller start
@@ -105,3 +106,20 @@ export const handleLogoutController = async (req: Request, res: Response) => {
   }
 };
 //logout end
+
+// delete register account
+export const deleteRegisterController = async (req: Request, res: Response) => {
+  try {
+
+    const { id } = req.params;
+    if (!id || !isValidObjectId(id)) {
+      return res
+        .status(400)
+        .send({ success: false, message: "Invalid Id provided." });
+    }
+    const deleteAccount = await users.findByIdAndDelete(req.params.id);
+    res.status(200).send({ success: true, message: "Account deleted" });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+}

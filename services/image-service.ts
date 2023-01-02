@@ -12,8 +12,8 @@ export const resizeImageAndUpload = async (
       //PATH CONFIG
       const time = new Date().getTime();
       const fileName = `${filename}-${time}.webp`;
-      const folderPath = path.join(__dirname, "../", "uploads", "beds");
-      const uploadPath = path.join(__dirname, "../", "uploads", "beds", fileName);
+      const folderPath = path.join(__dirname, "../", "uploads", "items");
+      const uploadPath = path.join(__dirname, "../", "uploads", "items", fileName);
   
       //CREATE FOLDER IF NOT EXISTS
       if (!fs.existsSync(folderPath)) {
