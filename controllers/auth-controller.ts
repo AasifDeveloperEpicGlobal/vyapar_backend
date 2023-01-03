@@ -11,14 +11,15 @@ const jwt = require("jsonwebtoken");
 // register user controller start
 export const handleRegisterController = async (req: Request, res: Response) => {
   try {
-    const { name, email, password, mobile, company, role } = req.body;
+    const { name, email, password, mobile, company, role, isRegistered } = req.body;
     const user = await registerUserService(
       name,
       email,
       password,
       mobile,
       company,
-      role
+      role,
+      isRegistered,
     );
     return res.status(200).json({
       success: true,
@@ -119,6 +120,21 @@ export const deleteRegisterController = async (req: Request, res: Response) => {
     }
     const deleteAccount = await users.findByIdAndDelete(req.params.id);
     res.status(200).send({ success: true, message: "Account deleted" });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+}
+
+// count user controller 
+export const dataCount = async (req: Request, res: Response) => {
+  try {
+    const count_data = [];
+    // const countUser = await users.find().count(); //count all users and admin
+    const countUser = await users.find({ role: "user" }).count(); //count only user
+    count_data.push({
+      countUser: countUser,
+    });
+    res.status(200).send({ success: true, message: "Counting users", data: count_data });
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }

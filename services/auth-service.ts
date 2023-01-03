@@ -33,7 +33,8 @@ export const registerUserService = async (
   password: string,
   mobile: string,
   company: string,
-  role: string
+  role: string,
+  isRegistered: boolean,
 ) => {
   const user = await users.findOne({ email });
   if (user) throw new Error("User already exists");
@@ -49,6 +50,7 @@ export const registerUserService = async (
     mobile,
     company,
     role,
+    isRegistered: true,
   });
   await newUser.save();
   return newUser;

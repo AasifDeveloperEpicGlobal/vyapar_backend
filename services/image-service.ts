@@ -30,7 +30,7 @@ export const resizeImageAndUpload = async (
         .toFile(uploadPath);
   
       //RETURNING IMAGE URL
-      return `${process.env.BASE_URL}/api/beds-image/${fileName}`;
+      return `${process.env.BASE_URL}/api/items-image/${fileName}`;
     } catch (error: any) {
       throw Error(error?.message);
     }
