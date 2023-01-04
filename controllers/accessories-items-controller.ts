@@ -7,16 +7,12 @@ import { deleteItemService, getAllItemService, getAllUnitService, getItemByIdSer
 
 // item controller start 
 export const handleItemController = async (req: Request, res: Response) => {
-  const { name, code, saleAmount, saleTaxAmount } = req.body;
-  if (!name || !code || !saleAmount || !saleTaxAmount) {
+  const { name, code, saleAmount, saleTaxAmount, hsn } = req.body;
+  if (!name || !code || !saleAmount || !saleTaxAmount || !hsn) {
     return res
       .status(400)
       .json({ success: false, message: "All fields are required" });
   }
-  // saleAmount - 500
-  // saleTaxAmount -5% GST
-  // newAmont should be 525
-  var newAmount = await (saleAmount * saleTaxAmount) / 100;
 
   //check code validation
   const itemCode = await items.findOne({ code });
@@ -28,7 +24,13 @@ export const handleItemController = async (req: Request, res: Response) => {
   }
 
   const units = await unit.findOne({});
-  const Itemhsn = await hsn.findOne({});
+  const Itemhsn = await hsn.findOne({ hsn: 123 });
+
+  if (!Itemhsn) {
+    return res.status(400).json({ mewssage: "HSN is invalid" })
+  }
+  const newAmount = await (saleAmount + saleTaxAmount);
+  console.log(newAmount);
 
   try {
     const item = new items({
@@ -106,8 +108,8 @@ export const handleItemByIdController = async (req: Request, res: Response) => {
     const { id } = req.params;
     if (!id || !isValidObjectId(id)) {
       return res
-      .status(400)
-      .send({ success: false, message: "Invalid Id provided." });
+        .status(400)
+        .send({ success: false, message: "Invalid Id provided." });
     }
 
     const response = await getItemByIdService(req.params.id);

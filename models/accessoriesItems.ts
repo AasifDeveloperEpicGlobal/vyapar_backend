@@ -36,14 +36,15 @@ const accessoriesIconSchema = new Schema<Accessories>(
                 ref: "units",
             },
         ],
-        hsn: [
-            {
-                type: Schema.Types.ObjectId,
-                ref: "hsns",
-                unique: true,
-            },
-        ],
-
+        hsn: // otherwise same rakhna hai hsn ko unit ke jaise..
+            [
+                {
+                    // type: Schema.Types.ObjectId,
+                    ref: "hsns",
+                    type: Number,
+                    required: true,
+                },
+            ],
         saleAmount: {
             type: Number,
             required: true,

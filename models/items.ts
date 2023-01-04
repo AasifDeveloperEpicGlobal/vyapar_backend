@@ -25,7 +25,7 @@ const userSchema = new Schema<Items>(
     code: {
       type: String,
       required: true,
-      unique:true,
+      unique: true,
     },
     avatar: {
       type: String,
@@ -42,6 +42,7 @@ const userSchema = new Schema<Items>(
         type: Schema.Types.ObjectId,
         ref: "hsns",
         unique: true,
+        required: true,
       },
     ],
     saleAmount: {

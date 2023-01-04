@@ -3,8 +3,8 @@ import accessoriesItems from "../models/accessoriesItems";
 import { resizeImageAndUpload } from "../services/image-service";
 const router = Router();
 import upload from "../config/multer";
-import hsn from "../models/hsn";
 import unit from "../models/unit";
+import HSN from "../models/hsn";
 import { deleteItemController, handleAllItemController, handleItemByIdController, handleItemUnitController } from "../controllers/accessories-items-controller";
 import { isValidObjectId } from "mongoose";
 import path from "path";
@@ -15,7 +15,7 @@ import { rm } from "fs/promises";
 // CREATE ITEM
 router.post("/item", upload.single("image"), async (req, res) => {
   try {
-    let { name, code, saleAmount, saleTaxAmount } = req.body;
+    let { name, code, saleAmount, saleTaxAmount, hsn } = req.body;
 
     if (!req.file) {
       return res.status(400).send({
@@ -24,24 +24,39 @@ router.post("/item", upload.single("image"), async (req, res) => {
       });
     }
 
-    if (!code || !name || !saleAmount || !saleTaxAmount) {
+    if (!code || !name || !saleAmount || !saleTaxAmount || !hsn) {
       return res.status(400).send({
         success: false,
-        message: "fields are required",
+        message: "Fields are required. HSN number must be unique.",
       });
     }
 
-    const HSN = await hsn.findOne({});
+    const itemCode = await accessoriesItems.findOne({ code });
+    if (itemCode) {
+      return res.status(400).json({
+        success: false,
+        message: "Item code already exists, Enter a unique code",
+      });
+    }
+
+    const itemHSN = await accessoriesItems.findOne({ hsn });
+    if (itemHSN) {
+      return res.status(400).json({
+        success: false,
+        message: "HSN must be unique code",
+      });
+    }
+
     const UNIT = await unit.findOne({});
+    const ITEMHSN = await HSN.findOne({ hsn: 123 });
     const findDuplicateItem = await accessoriesItems.findOne({
-      name,
-      code
+      name
     });
 
     if (findDuplicateItem) {
       return res.status(400).send({
         success: false,
-        message: "Name & Code already exists & must be unique",
+        message: "Name already exists & must be unique",
       });
     }
 
@@ -52,7 +67,7 @@ router.post("/item", upload.single("image"), async (req, res) => {
       image: getUrl,
       name: name,
       saleAmount: saleAmount,
-      hsn: HSN,
+      hsn: hsn,
       unit: UNIT,
       saleTaxAmount: saleTaxAmount,
     });
