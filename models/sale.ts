@@ -8,24 +8,11 @@ export interface Sale extends Document {
     amount: number;
     itemName: string;
     qty: number;
+    unit: string;
 }
 
 const saleSchema = new Schema<Sale>(
     {
-        qty: {
-            type: Number,
-            required: true,
-            default: 0,
-        },
-        itemName: {
-            type: String,
-            require: true
-        },
-        invoiceDate: {
-            type: Date,
-            required: true,
-            // default: Date.now,
-        },
         name: {
             type: String,
             required: true,
@@ -39,10 +26,27 @@ const saleSchema = new Schema<Sale>(
             type: Number,
             required: true,
         },
+        itemName: {
+            type: String,
+            require: true
+        },
+        invoiceDate: {
+            type: Date,
+            required: true,
+        },
         amount: {
             type: Number,
             required: true,
-        }
+        },
+        unit: {
+            type: String,
+            required: true,
+        },
+        qty: {
+            type: Number,
+            required: true,
+            default: 0,
+        },
     },
     {
         timestamps: true,

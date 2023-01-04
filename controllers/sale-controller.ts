@@ -6,37 +6,46 @@ import { deleteSaleService, getAllSaleService, getSaleByIdService } from "../ser
 // sale controller
 export const handleSaleController = async (req: Request, res: Response) => {
     try {
-        const { name, number, invoiceNumber, amount, itemName, qty } = req.body;
-        if (!name || !number || !invoiceNumber || !amount || !itemName) {
+        const { name, number, amount, itemName, qty, unit } = req.body;
+        if (!name || !number || !amount || !itemName || !unit) {
             return res.status(500).send({ success: false, message: "All fields are required" });
         }
 
+        // generating invoice number... 
+        let d = new Date();
+        let t = new Date().getTime();
+        var invoicenumber = Math.floor(Math.random() * (1000 - 500000)) + 1000;
+        console.log("Before number :: " + invoicenumber);
+        invoicenumber = d.getFullYear() + (d.getMonth() + 1) + (d.getDate()) + invoicenumber;
+        invoicenumber = invoicenumber + t;
+        console.log("After number :: " + invoicenumber);
+
         const findDuplicateField = await sale.findOne({
-            number,
-            invoiceNumber
+            number
         });
 
         if (findDuplicateField) {
             return res.status(400).send({
                 success: false,
-                message: "Number or Invoce number already exists & must be unique",
+                message: "Number already exists & must be unique",
             });
         }
-        const newDate = new Date();
-
+        let date = new Date();
+        const newDate = date.toString();
         const sales = new sale({
             name: name,
             number: number,
-            invoiceNumber: invoiceNumber,
+            invoiceNumber: invoicenumber,
             invoiceDate: newDate,
             amount: amount,
             itemName: itemName,
             qty: qty,
+            unit: unit,
         });
 
         sales.save((err, data) => {
             if (err) throw err;
-            res.send(data);
+            res.send({ success: true, message: "Added Successful", data });
         });
     } catch (error: any) {
         res.status(500).send(error?.message);
@@ -46,8 +55,8 @@ export const handleSaleController = async (req: Request, res: Response) => {
 // get all sale controller
 export const handleAllSaleController = async (req: Request, res: Response) => {
     try {
-        const allSale = await getAllSaleService();
-        res.status(200).send({ success: true, message: allSale });
+        const Sale = await getAllSaleService();
+        res.status(200).send({ success: true, message: Sale });
     } catch (error: any) {
         res.status(400).send({ error: error.message });
     }

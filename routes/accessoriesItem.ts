@@ -1,4 +1,4 @@
-import { Router, Request, Response } from "express";
+import { Router, } from "express";
 import accessoriesItems from "../models/accessoriesItems";
 import { resizeImageAndUpload } from "../services/image-service";
 const router = Router();
