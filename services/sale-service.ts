@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { isValidObjectId } from "mongoose";
 import sales from "../models/sale";
 
 export const getAllSaleService = async () => {
