@@ -9,7 +9,7 @@ export interface AddRow extends Document {
     priceUnitTax: string;
     saletax: {
         tax: number;
-        taxableAmount: number;
+        taxOnAmount: number;
     }
 }
 
@@ -35,13 +35,14 @@ const AddRowSchema = new Schema<AddRow>(
         priceUnitTax: {
             type: String,
             required: false,
+            default: "Without Tax"
         },
         saletax: {
             tax: {
                 type: Number,
                 required: false,
             },
-            taxableAmount: {
+            taxOnAmount: {
                 type: Number,
                 required: false,
             },

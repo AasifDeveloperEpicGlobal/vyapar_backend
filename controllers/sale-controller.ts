@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
 import { isValidObjectId } from "mongoose";
+import row from "../models/row";
 import sale from "../models/sale";
-import { deleteSaleService, getAllSaleService, getSaleByIdService } from "../services/sale-service";
+import { deleteSaleService, getAllSaleService, getRowService, getSaleByIdService } from "../services/sale-service";
 
 // sale controller
 export const handleSaleController = async (req: Request, res: Response) => {
@@ -143,5 +144,72 @@ export const updateSaleController = async (req: Request, res: Response) => {
             });
     } catch (error: any) {
         res.status(500).send(error);
+    }
+}
+
+// add sale row controller
+export const addSaleRowController = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        const { itemName, saletax, qty, unit, priceUnitTax } = req.body;
+
+        // saletax.taxableAmount = ((saletax?.taxableAmount * saletax?.tax) / 100) + 100;
+        // console.log(saletax.taxableAmount);
+        const taxOnAmount = ((saletax?.taxOnAmount * saletax?.tax) / 100) + 100;
+
+        if (!itemName) {
+            return res.status(400).json({ message: "Item name cannot be empty." });
+        }
+
+        if (!id || !isValidObjectId(id)) {
+            return res.status(400).json({ message: "Invalid ID provided." });
+        }
+
+        const saleFind = await sale.findOne({ _id: id }).populate("row").lean();
+        if (!saleFind) {
+            return res.status(400).json({ message: "Invalid ID provided." });
+        }
+
+        const addrow = new row({
+            amount: taxOnAmount,
+            itemName: itemName,
+            qty: qty,
+            unit: unit,
+            priceUnitTax,
+            saletax,
+        });
+
+        addrow.save(req.body, async (err: any, data: any) => {
+            if (err) {
+                return res.status(500).send(err);
+            }
+            await sale.findByIdAndUpdate(id, {
+                $push: {
+                    row: data._id,
+                },
+            });
+            res.status(200).json({
+                message: "Row Added Successfully",
+                data,
+            });
+        });
+    } catch (error: any) {
+        res.status(400).send({ error: error.message });
+    }
+}
+
+// get sale row conrtoller 
+export const getRowController = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+
+        if (!id || !isValidObjectId(id)) {
+            return res.status(400).json({ message: "Invalid ID provided." });
+        }
+
+        const getRow = await getRowService(req.params.id);
+        res.status(200).send({ success: true, data: getRow });
+    } catch (error: any) {
+        res.status(500).send({ error: error.message });
     }
 }

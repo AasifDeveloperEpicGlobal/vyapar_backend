@@ -1,5 +1,4 @@
-import { Request, Response } from "express";
-import { isValidObjectId } from "mongoose";
+import row from "../models/row";
 import sales from "../models/sale";
 
 export const getAllSaleService = async () => {
@@ -15,4 +14,9 @@ export const getSaleByIdService = async (id: string) => {
 export const deleteSaleService = async (id: string) => {
     const deleteSale = await sales.findByIdAndDelete(id);
     return deleteSale;
+}
+
+export const getRowService = async (id: string) => {
+    const getRow = await row.findById(id);
+    return getRow;
 }

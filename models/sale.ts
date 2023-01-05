@@ -58,6 +58,7 @@ const saleSchema = new Schema<Sale>(
         priceUnitTax: {
             type: String,
             required: false,
+            default: "Without Tax",
         },
         saletax: {
             tax: {
