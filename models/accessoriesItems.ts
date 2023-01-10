@@ -25,26 +25,22 @@ const accessoriesIconSchema = new Schema<Accessories>(
         code: {
             type: String,
             required: true,
+            unique: true,
         },
         image: {
             type: String,
             required: true,
         },
-        unit: [
-            {
-                type: Schema.Types.ObjectId,
-                ref: "units",
-            },
-        ],
+        unit: {
+            type: String,
+            required: false,
+        },
         hsn: // otherwise same rakhna hai hsn ko unit ke jaise..
-            [
-                {
-                    // type: Schema.Types.ObjectId,
-                    ref: "hsns",
-                    type: Number,
-                    required: true,
-                },
-            ],
+        {
+            type: Number,
+            required: false,
+            unique: true,
+        },
         saleAmount: {
             type: Number,
             required: true,

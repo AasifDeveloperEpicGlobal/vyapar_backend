@@ -1,14 +1,12 @@
 import { Request, Response } from "express";
 import { isValidObjectId } from "mongoose";
-import hsn from "../models/hsn";
 import items from "../models/items";
-import unit from "../models/unit";
 import { deleteItemService, getAllItemService, getAllUnitService, getItemByIdService, getItemHsnService } from "../services/item-service";
 
 // item controller start 
 export const handleItemController = async (req: Request, res: Response) => {
-  const { name, code, saleAmount, saleTaxAmount, hsn } = req.body;
-  if (!name || !code || !saleAmount || !saleTaxAmount || !hsn) {
+  const { name, code, saleAmount, saleTaxAmount, hsn, unit } = req.body;
+  if (!name || !code || !saleAmount || !saleTaxAmount || !hsn || !unit) {
     return res
       .status(400)
       .json({ success: false, message: "All fields are required" });
@@ -23,7 +21,6 @@ export const handleItemController = async (req: Request, res: Response) => {
     });
   }
 
-  const units = await unit.findOne({});
   const Itemhsn = await hsn.findOne({ hsn: 123 });
 
   if (!Itemhsn) {
@@ -36,8 +33,8 @@ export const handleItemController = async (req: Request, res: Response) => {
     const item = new items({
       name: req.body.name,
       code: req.body.code,
-      unit: units,
-      hsn: Itemhsn,
+      unit,
+      hsn,
       saleAmount: newAmount,
       saleTaxAmount: req.body.saleTaxAmount,
       purchaseAmount: req.body.purchaseAmount,

@@ -20,3 +20,9 @@ export const getRowService = async (id: string) => {
     const getRow = await row.findById(id);
     return getRow;
 }
+
+// generate invoice number
+export const generateInvoiceNumber = () => {
+    const invoiceNumber = Math.floor(1000000000 + Math.random() * 9000000000);
+    return invoiceNumber;
+}

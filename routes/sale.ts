@@ -1,4 +1,4 @@
-import { Router, Request, Response } from "express";
+import { Router } from "express";
 import {
     addSaleRowController,
     deleteSaleController,
@@ -8,6 +8,7 @@ import {
     handleSaleController,
     updateSaleController
 } from "../controllers/sale-controller";
+import sale from "../models/sale";
 const router = Router();
 
 router.post("/", handleSaleController);

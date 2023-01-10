@@ -2,29 +2,21 @@ import { Request, Response } from "express";
 import { isValidObjectId } from "mongoose";
 import row from "../models/row";
 import sale from "../models/sale";
-import { deleteSaleService, getAllSaleService, getRowService, getSaleByIdService } from "../services/sale-service";
+import { deleteSaleService, generateInvoiceNumber, getAllSaleService, getRowService, getSaleByIdService } from "../services/sale-service";
 
 // sale controller
 export const handleSaleController = async (req: Request, res: Response) => {
     try {
-        const { name, number, amount, itemName, qty, unit, priceUnitTax, saletax } = req.body;
+        const { name, number, itemName, qty, unit, priceUnitTax, saletax } = req.body;
         if (!name || !number || !itemName || !unit) {
             return res.status(500).send({ success: false, message: "All fields are required" });
         }
 
         // saletax.taxableAmount = ((saletax?.taxableAmount * saletax?.tax) / 100) + 100;
-        console.log(saletax.taxableAmount);
         const taxOnAmount = ((saletax?.taxOnAmount * saletax?.tax) / 100) + 100;
 
         // generating invoice number... 
-        let d = new Date();
-        let t = new Date().getTime();
-        var invoicenumber = Math.floor(Math.random() * (1000 - 500000)) + 1000;
-        console.log("Before number :: " + invoicenumber);
-        invoicenumber = d.getFullYear() + (d.getMonth() + 1) + (d.getDate()) + invoicenumber;
-        invoicenumber = invoicenumber + t;
-        console.log("After number :: " + invoicenumber);
-
+        const invoiceNumber = generateInvoiceNumber();
         const findDuplicateField = await sale.findOne({
             number
         });
@@ -38,21 +30,16 @@ export const handleSaleController = async (req: Request, res: Response) => {
         let date = new Date();
         const newDate = date.toString();
         const sales = new sale({
-            name: name,
-            number: number,
-            invoiceNumber: invoicenumber,
+            name, number,
+            invoiceNumber: invoiceNumber,
             invoiceDate: newDate,
             amount: taxOnAmount,
-            itemName: itemName,
-            qty: qty,
-            unit: unit,
-            priceUnitTax: priceUnitTax,
-            saletax,
+            itemName, qty, unit, priceUnitTax, saletax,
         });
 
         sales.save((err, data) => {
             if (err) throw err;
-            res.send({ success: true, message: "Added Successful", data });
+            res.send({ success: true, message: "Sale Added Successful", data });
         });
     } catch (error: any) {
         res.status(500).send(error?.message);

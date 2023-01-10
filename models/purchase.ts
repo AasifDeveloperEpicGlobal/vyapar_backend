@@ -1,50 +1,69 @@
 import { model, Schema } from "mongoose";
-import row from "../models/row";
 
-export interface Sale extends Document {
-    invoiceDate: Date,
-    name: string;
+export interface Purchase extends Document {
+    invoiceDate: Date;
+    partyName: string;
+    billNumber: number;
     number: string;
-    invoiceNumber: number;
-    amount: number;
+    paymentType: string;
+    addDescription: string;
+    total: number;
+    roundOff: number;
+    // Outside purchase table
+
+    // Inside purchase table
     itemName: string;
     qty: number;
     unit: string;
     priceUnitTax: string;
-    saletax: {
-        tax: number;
+    amount: number;
+    purchaseTax: {
+        tax: number,
         taxOnAmount: number;
     }
-    row: string[];
-
 }
 
-const saleSchema = new Schema<Sale>(
+const purchaseSchema = new Schema<Purchase>(
     {
-        name: {
+        partyName: {
             type: String,
             required: true,
+        },
+        billNumber: {
+            type: Number,
+            required: false,
         },
         number: {
             type: String,
             required: true,
-            unique: true,
         },
-        invoiceNumber: {
-            type: Number,
+        paymentType: {
+            type: String,
+            required: true,
+            default: "CASH",
+        },
+        addDescription: {
+            type: String,
             required: false,
         },
-        itemName: {
-            type: String,
-            required: true
+        total: {
+            type: Number,
+            required: false,
+            default: 0,
+        },
+        roundOff: {
+            type: Number,
+            required: false,
+            default: 0,
         },
         invoiceDate: {
             type: Date,
             default: Date.now,
         },
-        amount: {
-            type: Number,
-            required: false,
+
+        itemName: {
+            type: String,
+            required: true,
         },
         unit: {
             type: String,
@@ -60,7 +79,7 @@ const saleSchema = new Schema<Sale>(
             required: false,
             default: "Without Tax",
         },
-        saletax: {
+        purchaseTax: {
             tax: {
                 type: Number,
                 required: false,
@@ -70,16 +89,14 @@ const saleSchema = new Schema<Sale>(
                 required: false,
             },
         },
-        row: [
-            {
-                type: Schema.Types.ObjectId,
-                ref: row,
-            }
-        ]
+        amount: {
+            type: Number,
+            required: false,
+        },
     },
     {
         timestamps: true,
     }
 );
 
-export default model<Sale>("sale", saleSchema);
+export default model<Purchase>("purchase", purchaseSchema);

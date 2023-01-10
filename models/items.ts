@@ -31,12 +31,10 @@ const userSchema = new Schema<Items>(
       type: String,
       required: true,
     },
-    unit: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "units",
-      },
-    ],
+    unit: {
+      type: String,
+      required: false,
+    },
     hsn: [
       {
         type: Schema.Types.ObjectId,

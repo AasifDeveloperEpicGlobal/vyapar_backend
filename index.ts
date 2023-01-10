@@ -11,6 +11,7 @@ import accessoriesItem from "./routes/accessoriesItem";
 import unitRoutes from "./routes/unit";
 import hsnRoutes from "./routes/hsn";
 import saleRoutes from "./routes/sale";
+import purchaseRoutes from "./routes/purchase";
 
 mongoose.set("strictQuery", false);
 
@@ -57,5 +58,6 @@ app.use("/api/accessories", accessoriesItem);
 app.use("/api/unit", unitRoutes);
 app.use("/api/hsn", hsnRoutes);
 app.use("/api/sale", saleRoutes);
+app.use("/api/purchase", purchaseRoutes);
 
 // app.use("/api/beds", testRoutes);

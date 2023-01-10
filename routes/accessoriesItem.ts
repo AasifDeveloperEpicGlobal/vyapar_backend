@@ -15,7 +15,7 @@ import { rm } from "fs/promises";
 // CREATE ITEM
 router.post("/item", upload.single("image"), async (req, res) => {
   try {
-    let { name, code, saleAmount, saleTaxAmount, hsn } = req.body;
+    let { name, code, saleAmount, saleTaxAmount, hsn, unit } = req.body;
 
     if (!req.file) {
       return res.status(400).send({
@@ -47,8 +47,6 @@ router.post("/item", upload.single("image"), async (req, res) => {
       });
     }
 
-    const UNIT = await unit.findOne({});
-    const ITEMHSN = await HSN.findOne({ hsn: 123 });
     const findDuplicateItem = await accessoriesItems.findOne({
       name
     });
@@ -67,8 +65,8 @@ router.post("/item", upload.single("image"), async (req, res) => {
       image: getUrl,
       name: name,
       saleAmount: saleAmount,
-      hsn: hsn,
-      unit: UNIT,
+      hsn,
+      unit,
       saleTaxAmount: saleTaxAmount,
     });
 
@@ -115,8 +113,8 @@ router.put("/update/:id", upload.single("image"), async (req, res) => {
             saleAmount: saleAmount,
             saleTaxAmount: saleTaxAmount,
             image: file ? imageUrl : undefined,
-            hsn: hsn,
-            unit: unit,
+            hsn,
+            unit,
           },
         },
         { multi: false, omitUndefined: true, new: false }
