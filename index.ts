@@ -13,6 +13,7 @@ import hsnRoutes from "./routes/hsn";
 import saleRoutes from "./routes/sale";
 import purchaseRoutes from "./routes/purchase";
 import requestRoutes from "./routes/request";
+import reviewsRoutes from "./routes/review";
 
 mongoose.set("strictQuery", false);
 
@@ -61,5 +62,6 @@ app.use("/api/hsn", hsnRoutes);
 app.use("/api/sale", saleRoutes);
 app.use("/api/purchase", purchaseRoutes);
 app.use("/api/request", requestRoutes);
+app.use("/api/reviews", reviewsRoutes);
 
 // app.use("/api/beds", testRoutes);
