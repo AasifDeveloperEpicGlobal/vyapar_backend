@@ -130,7 +130,7 @@ export const dataCount = async (req: Request, res: Response) => {
   try {
     const count_data = [];
     // const countUser = await users.find().count(); //count all users and admin
-    const countUser = await users.find({ role: "user" }).count(); //count only user
+    const countUser = await users.find({ role: "user"}).count(); //count only user
     count_data.push({
       countUser: countUser,
     });

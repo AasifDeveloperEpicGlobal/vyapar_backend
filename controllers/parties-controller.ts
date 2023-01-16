@@ -9,9 +9,9 @@ import {
 } from "../services/parties-service";
 import State from "../models/state";
 export const handlePartyController = async (req: Request, res: Response) => {
-  const { name, gstin, mobile, unregisteredcustomer, email, address } =
+  const { name, gstin, mobile, unregisteredcustomer, email, address, state } =
     req.body;
-  if (!name || !gstin || !mobile || !email || !address) {
+  if (!name || !gstin || !mobile || !email || !address || !state) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
@@ -38,7 +38,6 @@ export const handlePartyController = async (req: Request, res: Response) => {
       .status(400)
       .json({ message: "GSTIN already exists, Enter a unique GSTIN" });
   }
-  const stateId = await State.findOne({});
   try {
     const createParties = await parties.create({
       name,
@@ -47,7 +46,7 @@ export const handlePartyController = async (req: Request, res: Response) => {
       unregisteredcustomer: Array.isArray(unregisteredcustomer)
         ? unregisteredcustomer
         : undefined,
-      state: stateId,
+      state,
       email,
       address,
     });
@@ -70,7 +69,7 @@ export const handleAllPartyController = async (req: Request, res: Response) => {
   }
 };
 
-{/* get parties by id controller */}
+{/* get parties by id controller */ }
 export const handlePartyByIdController = async (
   req: Request,
   res: Response
@@ -155,11 +154,11 @@ export const handleUpdatePartyController = async (
 };
 
 {/* get parties state controller*/ }
-export const handlePartystateController =async (req:Request, res:Response) => {
+export const handlePartystateController = async (req: Request, res: Response) => {
   try {
-      const response = await getAllStateService();
-      res.status(200).send({success:true, message:"State data", data:response});
-  } catch (error:any) {
-      res.status(500).send({success:false, message:"Something went wrong!!"});
+    const response = await getAllStateService();
+    res.status(200).send({ success: true, message: "State data", data: response });
+  } catch (error: any) {
+    res.status(500).send({ success: false, message: "Something went wrong!!" });
   }
 }

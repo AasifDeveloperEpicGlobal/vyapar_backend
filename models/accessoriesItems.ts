@@ -8,7 +8,7 @@ interface Accessories extends Document {
     hsn: number;
 
     saleAmount: number;
-    saleTaxAmount: number;
+    saleTax: string;
     purchaseAmount: number;
     purchaseTaxAmount: number;
     discOnSaleAmount: number;
@@ -45,9 +45,10 @@ const accessoriesIconSchema = new Schema<Accessories>(
             type: Number,
             required: true,
         },
-        saleTaxAmount: {
-            type: Number,
-            required: true,
+        saleTax: {
+            type: String,
+            required: false,
+            default: "Without Tax"
         },
         purchaseAmount: {
             type: Number,

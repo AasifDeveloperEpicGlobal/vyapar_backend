@@ -3,9 +3,7 @@ import accessoriesItems from "../models/accessoriesItems";
 import { resizeImageAndUpload } from "../services/image-service";
 const router = Router();
 import upload from "../config/multer";
-import unit from "../models/unit";
-import HSN from "../models/hsn";
-import { deleteItemController, handleAllItemController, handleItemByIdController, handleItemUnitController } from "../controllers/accessories-items-controller";
+import { deleteItemController, handleAllItemController, handleItemByIdController } from "../controllers/accessories-items-controller";
 import { isValidObjectId } from "mongoose";
 import path from "path";
 import { existsSync } from "fs";
@@ -15,8 +13,11 @@ import { rm } from "fs/promises";
 // CREATE ITEM
 router.post("/item", upload.single("image"), async (req, res) => {
   try {
-    let { name, code, saleAmount, saleTaxAmount, hsn, unit } = req.body;
+    let { name, code, saleAmount, hsn, unit, percentage, saleTax } = req.body;
 
+    const totalAmount = ((percentage * saleAmount) / 100) + 100;
+    console.log(totalAmount);
+    
     if (!req.file) {
       return res.status(400).send({
         success: false,
@@ -24,7 +25,7 @@ router.post("/item", upload.single("image"), async (req, res) => {
       });
     }
 
-    if (!code || !name || !saleAmount || !saleTaxAmount || !hsn) {
+    if (!code || !name || !saleAmount || !hsn) {
       return res.status(400).send({
         success: false,
         message: "Fields are required. HSN number must be unique.",
@@ -65,9 +66,9 @@ router.post("/item", upload.single("image"), async (req, res) => {
       image: getUrl,
       name: name,
       saleAmount: saleAmount,
-      hsn,
-      unit,
-      saleTaxAmount: saleTaxAmount,
+      hsn,percentage,
+      unit, saleTax,
+      discOnSaleAmount: totalAmount,
     });
 
     accessoriesIcon.save((err, data) => {

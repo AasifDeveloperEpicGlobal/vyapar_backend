@@ -34,12 +34,11 @@ const partySchema = new Schema(
         required: false,
       },
     ],
-    state: [
-      {
-        type: Schema.Types.ObjectId, String,
-        ref: "states",
-      },
-    ],
+    state:
+    {
+      type: String,
+      required: true,
+    },
     email: {
       type: String,
       required: true,

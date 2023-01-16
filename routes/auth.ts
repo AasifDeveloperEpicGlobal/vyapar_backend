@@ -10,8 +10,8 @@ import {
 
 const router = Router();
 
-//register user router
-router.post("/register-user",handleRegisterController);
+// --------------------------------- Routes ---------------------------------------
+router.post("/register-user", handleRegisterController);
 router.post("/login", handleLoginController);
 router.post("/register-admin", handleRegisterAdminController);
 router.post("/logout", handleLogoutController);

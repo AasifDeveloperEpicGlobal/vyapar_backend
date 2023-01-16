@@ -124,4 +124,3 @@ export const isAdmin = (req: Request, res: Response, next: NextFunction) => {
     res.status(500).json({ error: error.message });
   }
 };
-

@@ -16,7 +16,7 @@ export const handleSaleController = async (req: Request, res: Response) => {
         const taxOnAmount = ((saletax?.taxOnAmount * saletax?.tax) / 100) + 100;
 
         // generating invoice number... 
-        const invoiceNumber = generateInvoiceNumber();
+        //const invoiceNumber = generateInvoiceNumber();
         const findDuplicateField = await sale.findOne({
             number
         });
@@ -31,7 +31,6 @@ export const handleSaleController = async (req: Request, res: Response) => {
         const newDate = date.toString();
         const sales = new sale({
             name, number,
-            invoiceNumber: invoiceNumber,
             invoiceDate: newDate,
             amount: taxOnAmount,
             itemName, qty, unit, priceUnitTax, saletax,
@@ -143,7 +142,7 @@ export const addSaleRowController = async (req: Request, res: Response) => {
         // saletax.taxableAmount = ((saletax?.taxableAmount * saletax?.tax) / 100) + 100;
         // console.log(saletax.taxableAmount);
         const taxOnAmount = ((saletax?.taxOnAmount * saletax?.tax) / 100) + 100;
-
+    
         if (!itemName) {
             return res.status(400).json({ message: "Item name cannot be empty." });
         }
@@ -198,5 +197,52 @@ export const getRowController = async (req: Request, res: Response) => {
         res.status(200).send({ success: true, data: getRow });
     } catch (error: any) {
         res.status(500).send({ error: error.message });
+    }
+}
+
+// update row controller
+export const updateRowController = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        const { itemName, qty, unit, saletax, priceUnitTax } = req.body;
+
+        // update tax on amount..
+        const taxOnAmount = ((saletax?.taxOnAmount * saletax?.tax) / 100) + 100;
+
+        if (!id || !isValidObjectId(id)) {
+            return res.status(400).send({
+                success: false,
+                message: "Valid id is required",
+            });
+        }
+        // updating row
+        await row.findOneAndUpdate(
+            { _id: id },
+            {
+                $set: {
+                    itemName, qty, unit, saletax, priceUnitTax, amount: taxOnAmount,
+                },
+            },
+        ).then((data) => {
+            res.send(data);
+        }).catch(async (err) => {
+            res.status(500).send(err);
+        });
+    } catch (error: any) {
+        res.status(500).send({ error: error.message });
+    }
+}
+
+// delete sale row controller
+export const deleteSaleRowController = async (req: Request, res: Response) => {
+    const { id } = req.params;
+    try {
+        const deletedBed = await row.findByIdAndDelete(id);
+        res.json({
+            message: "Sale Row Deleted Succesfully",
+            data: deletedBed,
+        });
+    } catch (error: any) {
+        res.status(500).send(error);
     }
 }

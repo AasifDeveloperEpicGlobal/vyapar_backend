@@ -1,9 +1,10 @@
 import { model, Schema } from "mongoose";
+import purchaseCounter from "./purchaseCounters";
+import purchaseRow from "./purchaseRow";
 
 export interface Purchase extends Document {
     invoiceDate: Date;
     partyName: string;
-    billNumber: number;
     number: string;
     paymentType: string;
     addDescription: string;
@@ -21,6 +22,8 @@ export interface Purchase extends Document {
         tax: number,
         taxOnAmount: number;
     }
+    row: string[];
+    purchaseId: number;
 }
 
 const purchaseSchema = new Schema<Purchase>(
@@ -29,7 +32,7 @@ const purchaseSchema = new Schema<Purchase>(
             type: String,
             required: true,
         },
-        billNumber: {
+        purchaseId: {
             type: Number,
             required: false,
         },
@@ -40,7 +43,7 @@ const purchaseSchema = new Schema<Purchase>(
         paymentType: {
             type: String,
             required: true,
-            default: "CASH",
+            default: "Cash",
         },
         addDescription: {
             type: String,
@@ -93,10 +96,31 @@ const purchaseSchema = new Schema<Purchase>(
             type: Number,
             required: false,
         },
+        row: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: purchaseRow,
+            }
+        ]
     },
     {
         timestamps: true,
     }
 );
+
+purchaseSchema.pre("save", function (next) {
+    purchaseCounter.findByIdAndUpdate(
+        { _id: "purchaseId" },
+        { $inc: { purchaseBillSeq: 1 } },
+        { new: true, upsert: true },
+        (err, counter) => {
+            if (err) {
+                return next(err);
+            }
+            this.purchaseId = counter.purchaseBillSeq;
+            next();
+        }
+    );
+});
 
 export default model<Purchase>("purchase", purchaseSchema);

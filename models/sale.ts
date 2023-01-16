@@ -1,11 +1,11 @@
 import { model, Schema } from "mongoose";
 import row from "../models/row";
+import saleCounter from "./saleCounters";
 
 export interface Sale extends Document {
     invoiceDate: Date,
     name: string;
     number: string;
-    invoiceNumber: number;
     amount: number;
     itemName: string;
     qty: number;
@@ -16,6 +16,7 @@ export interface Sale extends Document {
         taxOnAmount: number;
     }
     row: string[];
+    saleId: number;
 
 }
 
@@ -29,10 +30,6 @@ const saleSchema = new Schema<Sale>(
             type: String,
             required: true,
             unique: true,
-        },
-        invoiceNumber: {
-            type: Number,
-            required: false,
         },
         itemName: {
             type: String,
@@ -60,6 +57,10 @@ const saleSchema = new Schema<Sale>(
             required: false,
             default: "Without Tax",
         },
+        saleId: {
+            type: Number,
+            required: false,
+        },
         saletax: {
             tax: {
                 type: Number,
@@ -81,5 +82,20 @@ const saleSchema = new Schema<Sale>(
         timestamps: true,
     }
 );
+
+saleSchema.pre("save", function (next) {
+    saleCounter.findByIdAndUpdate(
+        { _id: "saleId" },
+        { $inc: { saleInvoiceSeq: 1 } },
+        { new: true, upsert: true },
+        (err, counter) => {
+            if (err) {
+                return next(err);
+            }
+            this.saleId = counter.saleInvoiceSeq;
+            next();
+        }
+    );
+});
 
 export default model<Sale>("sale", saleSchema);

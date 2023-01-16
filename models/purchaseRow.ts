@@ -7,7 +7,7 @@ export interface AddRow extends Document {
     qty: number;
     unit: string;
     priceUnitTax: string;
-    saletax: {
+    purchaseTax: {
         tax: number;
         taxOnAmount: number;
     }
@@ -37,7 +37,7 @@ const AddRowSchema = new Schema<AddRow>(
             required: false,
             default: "Without Tax"
         },
-        saletax: {
+        purchaseTax: {
             tax: {
                 type: Number,
                 required: false,
@@ -53,4 +53,4 @@ const AddRowSchema = new Schema<AddRow>(
     }
 );
 
-export default model<AddRow>("row", AddRowSchema);
+export default model<AddRow>("purchaserow", AddRowSchema);
