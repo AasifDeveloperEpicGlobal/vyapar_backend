@@ -1,4 +1,3 @@
-import review from "../models/review";
 import reviews from "../models/review";
 
 {/* create review service */ }
@@ -34,7 +33,7 @@ export const deleteReviewService = async (id: string) => {
 {/* get review by id service */ }
 export const getReviewByIdService = async (id: string) => {
     try {
-        const allReviews = await review.find({ productId: id, isApproved: true });
+        const allReviews = await reviews.find({ productId: id, isApproved: true });
         return allReviews;
     } catch (error: any) {
         throw new Error(error?.message);
