@@ -14,6 +14,7 @@ import saleRoutes from "./routes/sale";
 import purchaseRoutes from "./routes/purchase";
 import requestRoutes from "./routes/request";
 import reviewsRoutes from "./routes/review";
+import { isAdmin } from "./middlewares/utils";
 
 mongoose.set("strictQuery", false);
 

@@ -1,84 +1,109 @@
-import { Router, } from "express";
+import { Router } from "express";
 import accessoriesItems from "../models/accessoriesItems";
 import { resizeImageAndUpload } from "../services/image-service";
 const router = Router();
 import upload from "../config/multer";
-import { deleteItemController, handleAllItemController, handleItemByIdController } from "../controllers/accessories-items-controller";
+import {
+  deleteItemController,
+  handleAllItemController,
+  handleItemByIdController,
+} from "../controllers/accessories-items-controller";
 import { isValidObjectId } from "mongoose";
 import path from "path";
 import { existsSync } from "fs";
 import { rm } from "fs/promises";
 
-
 // CREATE ITEM
-router.post("/item", upload.single("image"), async (req, res) => {
-  try {
-    let { name, code, saleAmount, hsn, unit, percentage, saleTax } = req.body;
+router.post(
+  "/item",
+  // upload.single("image"),
+  async (req, res) => {
+    try {
+      let {
+        name,
+        code,
+        saleAmount,
+        hsn,
+        unit,
+        percentage,
+        saleTax,
+        discOnSaleAmount,
+        purchaseAmount,
+        purchaseTaxAmount,
+        noneTax,
+      } = req.body;
 
-    const totalAmount = ((percentage * saleAmount) / 100) + 100;
-    console.log(totalAmount);
-    
-    if (!req.file) {
-      return res.status(400).send({
-        success: false,
-        message: "IMAGE is required",
+      // if (!req.file) {
+      //   return res.status(400).send({
+      //     success: false,
+      //     message: "IMAGE is required",
+      //   });
+      // }
+
+      if (!code || !name || !saleAmount || !hsn) {
+        return res.status(400).send({
+          success: false,
+          message: "Fields are required. Value must be unique.",
+        });
+      }
+
+      const itemCode = await accessoriesItems.findOne({ code });
+      if (itemCode) {
+        return res.status(400).json({
+          success: false,
+          message: "Item code already exists, Enter a unique code",
+        });
+      }
+
+      const itemHSN = await accessoriesItems.findOne({ hsn });
+      if (itemHSN) {
+        return res.status(400).json({
+          success: false,
+          message: "HSN must be unique code",
+        });
+      }
+
+      const findDuplicateItem = await accessoriesItems.findOne({
+        name,
       });
-    }
 
-    if (!code || !name || !saleAmount || !hsn) {
-      return res.status(400).send({
-        success: false,
-        message: "Fields are required. HSN number must be unique.",
+      if (findDuplicateItem) {
+        return res.status(400).send({
+          success: false,
+          message: "Name already exists & must be unique",
+        });
+      }
+
+      // const getUrl = await resizeImageAndUpload(req.file, name);
+
+      const accessoriesIcon = new accessoriesItems({
+        code: code,
+        // image: getUrl,
+        name: name,
+        saleAmount: saleAmount,
+        hsn,
+        percentage,
+        unit,
+        saleTax,
+        discOnSaleAmount,
+        purchaseAmount,
+        purchaseTaxAmount,
+        noneTax,
       });
-    }
 
-    const itemCode = await accessoriesItems.findOne({ code });
-    if (itemCode) {
-      return res.status(400).json({
-        success: false,
-        message: "Item code already exists, Enter a unique code",
+      accessoriesIcon.save((err, data) => {
+        if (err) throw err;
+        res.send({
+          success: true,
+          message: "Item added successful",
+          response: data,
+        });
       });
+    } catch (error: any) {
+      res.status(500).send(error?.message);
     }
-
-    const itemHSN = await accessoriesItems.findOne({ hsn });
-    if (itemHSN) {
-      return res.status(400).json({
-        success: false,
-        message: "HSN must be unique code",
-      });
-    }
-
-    const findDuplicateItem = await accessoriesItems.findOne({
-      name
-    });
-
-    if (findDuplicateItem) {
-      return res.status(400).send({
-        success: false,
-        message: "Name already exists & must be unique",
-      });
-    }
-
-    const getUrl = await resizeImageAndUpload(req.file, name);
-
-    const accessoriesIcon = new accessoriesItems({
-      code: code,
-      image: getUrl,
-      name: name,
-      saleAmount: saleAmount,
-      hsn,percentage,
-      unit, saleTax,
-      discOnSaleAmount: totalAmount,
-    });
-
-    accessoriesIcon.save((err, data) => {
-      if (err) throw err;
-      res.send(data);
-    });
-  } catch (error: any) {
-    res.status(500).send(error?.message);
   }
-});
+);
 
 // GET ALL ITEM
 router.get("/", handleAllItemController);
@@ -147,6 +172,5 @@ router.put("/update/:id", upload.single("image"), async (req, res) => {
     res.status(500).send(error);
   }
 });
-
 
 export default router;

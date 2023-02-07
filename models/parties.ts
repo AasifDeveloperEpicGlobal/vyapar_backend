@@ -17,15 +17,15 @@ const partySchema = new Schema(
         message: "Provided gstin number is invalid.",
       },
     },
-    mobile: {
+    gst: {
       type: String,
       required: true,
       validate: {
         validator: function (v: any) {
-          var re = /^\d{10}$/;
+          var re = /\d{2}[A-Z]{5}\d{4}[A-Z]{1}[A-Z\d]{1}[Z]{1}[A-Z\d]{1}/;
           return !v || !v.trim().length || re.test(v);
         },
-        message: "Provided phone number is invalid.",
+        message: "Provided gstin number is invalid.",
       },
     },
     unregisteredcustomer: [
@@ -34,8 +34,7 @@ const partySchema = new Schema(
         required: false,
       },
     ],
-    state:
-    {
+    state: {
       type: String,
       required: true,
     },

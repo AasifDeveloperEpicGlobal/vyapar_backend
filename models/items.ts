@@ -8,11 +8,12 @@ export interface Items extends Document {
   hsn: number;
 
   saleAmount: number;
-  saleTaxAmount: number;
-  purchaseAmount: number;
-  purchaseTaxAmount: number;
+  saleTaxAmount: string;
   discOnSaleAmount: number;
   percentage: number;
+
+  purchaseAmount: number;
+  purchaseTaxAmount: number;
   noneTax: number;
 }
 
@@ -48,7 +49,7 @@ const userSchema = new Schema<Items>(
       required: true,
     },
     saleTaxAmount: {
-      type: Number,
+      type: String,
       required: true,
     },
     purchaseAmount: {

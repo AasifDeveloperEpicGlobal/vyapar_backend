@@ -6,6 +6,7 @@ import {
   handlePartyController,
   handleUpdatePartyController,
 } from "../controllers/parties-controller";
+import { isAdmin } from "../middlewares/utils";
 const router = Router();
 
 //parties router

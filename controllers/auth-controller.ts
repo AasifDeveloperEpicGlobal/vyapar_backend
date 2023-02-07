@@ -11,7 +11,8 @@ const jwt = require("jsonwebtoken");
 // register user controller start
 export const handleRegisterController = async (req: Request, res: Response) => {
   try {
-    const { name, email, password, mobile, company, role, isRegistered } = req.body;
+    const { name, email, password, mobile, company, role, isRegistered } =
+      req.body;
     const user = await registerUserService(
       name,
       email,
@@ -19,7 +20,7 @@ export const handleRegisterController = async (req: Request, res: Response) => {
       mobile,
       company,
       role,
-      isRegistered,
+      isRegistered
     );
     return res.status(200).json({
       success: true,
@@ -55,7 +56,12 @@ export const handleLoginController = async (req: Request, res: Response) => {
                 httpOnly: true,
                 expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
               })
-              .send({ success: true, user, message: "Login successful" });
+              .send({
+                success: true,
+                user,
+                token: token,
+                message: "You are logged in Successfully.",
+              });
             // res.send({ user, auth: token });
           }
         );
@@ -106,12 +112,23 @@ export const handleLogoutController = async (req: Request, res: Response) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+// Check Admin
+// export const isAdmin = async (req: Request, res: Response) => {
+//   try {
+//     const admin = await users.find({ role: "admin" });
+//     if()
+//     res.clearCookie("access_token");
+//     res.status(200).json({ success: true, message: "Logout successful" });
+//   } catch (error: any) {
+//     res.status(500).json({ error: error.message });
+//   }
+// };
 //logout end
 
 // delete register account
 export const deleteRegisterController = async (req: Request, res: Response) => {
   try {
-
     const { id } = req.params;
     if (!id || !isValidObjectId(id)) {
       return res
@@ -123,19 +140,21 @@ export const deleteRegisterController = async (req: Request, res: Response) => {
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }
-}
+};
 
-// count user controller 
+// count user controller
 export const dataCount = async (req: Request, res: Response) => {
   try {
     const count_data = [];
     // const countUser = await users.find().count(); //count all users and admin
-    const countUser = await users.find({ role: "user"}).count(); //count only user
+    const countUser = await users.find({ role: "user" }).count(); //count only user
     count_data.push({
       countUser: countUser,
     });
-    res.status(200).send({ success: true, message: "Counting users", data: count_data });
+    res
+      .status(200)
+      .send({ success: true, message: "Counting users", data: count_data });
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }
-}
+};

@@ -5,13 +5,15 @@ import {
   deletePartyService,
   getAllPartiesService,
   getAllStateService,
-  getPartiesByIdService
+  getPartiesByIdService,
 } from "../services/parties-service";
 import State from "../models/state";
+import { userInfo } from "os";
+import users from "../models/users";
 export const handlePartyController = async (req: Request, res: Response) => {
-  const { name, gstin, mobile, unregisteredcustomer, email, address, state } =
+  const { name, gstin, gst, unregisteredcustomer, email, address, state } =
     req.body;
-  if (!name || !gstin || !mobile || !email || !address || !state) {
+  if (!name || !gstin || !gst || !email || !address || !state) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
@@ -24,11 +26,11 @@ export const handlePartyController = async (req: Request, res: Response) => {
   }
 
   //Check number validation..
-  const partyNumber = await parties.findOne({ mobile });
+  const partyNumber = await parties.findOne({ gst });
   if (partyNumber) {
     return res
       .status(400)
-      .json({ message: "Number already exists, Enter a unique Number" });
+      .json({ message: "gst already exists, Enter a unique Number" });
   }
 
   //Check GSTIN validation..
@@ -42,7 +44,7 @@ export const handlePartyController = async (req: Request, res: Response) => {
     const createParties = await parties.create({
       name,
       gstin,
-      mobile,
+      gst,
       unregisteredcustomer: Array.isArray(unregisteredcustomer)
         ? unregisteredcustomer
         : undefined,
@@ -61,6 +63,8 @@ export const handlePartyController = async (req: Request, res: Response) => {
   /* get all parties controller */
 }
 export const handleAllPartyController = async (req: Request, res: Response) => {
+  // const { _id } = req.user;
+  // console.log(req.user);
   try {
     const response = await getAllPartiesService();
     res.status(200).send({ success: true, response });
@@ -69,7 +73,9 @@ export const handleAllPartyController = async (req: Request, res: Response) => {
   }
 };
 
-{/* get parties by id controller */ }
+{
+  /* get parties by id controller */
+}
 export const handlePartyByIdController = async (
   req: Request,
   res: Response
@@ -147,18 +153,31 @@ export const handleUpdatePartyController = async (
       { new: true }
     );
 
-    res.status(200).send({ updateParty });
+    res
+      .status(200)
+      .send({
+        success: true,
+        message: "Party Updated Successful.",
+        updateParty,
+      });
   } catch (error: any) {
     res.status(400).send({ error: error.message });
   }
 };
 
-{/* get parties state controller*/ }
-export const handlePartystateController = async (req: Request, res: Response) => {
+{
+  /* get parties state controller*/
+}
+export const handlePartystateController = async (
+  req: Request,
+  res: Response
+) => {
   try {
     const response = await getAllStateService();
-    res.status(200).send({ success: true, message: "State data", data: response });
+    res
+      .status(200)
+      .send({ success: true, message: "State data", data: response });
   } catch (error: any) {
     res.status(500).send({ success: false, message: "Something went wrong!!" });
   }
-}
+};
