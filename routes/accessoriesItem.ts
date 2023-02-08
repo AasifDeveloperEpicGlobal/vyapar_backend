@@ -12,6 +12,7 @@ import { isValidObjectId } from "mongoose";
 import path from "path";
 import { existsSync } from "fs";
 import { rm } from "fs/promises";
+import items from "../models/items";
 
 // CREATE ITEM
 router.post(
@@ -170,6 +171,36 @@ router.put("/update/:id", upload.single("image"), async (req, res) => {
       await rm(file.path);
     }
     res.status(500).send(error);
+  }
+});
+
+router.put("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      return res
+        .status(400)
+        .send({ success: false, message: "ID is required." });
+    }
+
+    if (!isValidObjectId(id)) {
+      return res
+        .status(400)
+        .send({ success: false, message: "Invalid Id provided." });
+    }
+    const updateItem = await accessoriesItems.findByIdAndUpdate(
+      req.params.id,
+      { $set: req.body },
+      { new: true }
+    );
+
+    res.status(200).send({
+      success: true,
+      message: "Item Updated Successful.",
+      updateItem,
+    });
+  } catch (error: any) {
+    res.status(400).send({ error: error.message });
   }
 });
 

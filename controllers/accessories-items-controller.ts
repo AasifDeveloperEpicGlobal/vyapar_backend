@@ -1,9 +1,15 @@
 import { Request, Response } from "express";
 import { isValidObjectId } from "mongoose";
 import items from "../models/items";
-import { deleteItemService, getAllItemService, getAllUnitService, getItemByIdService, getItemHsnService } from "../services/item-service";
+import {
+  deleteItemService,
+  getAllItemService,
+  getAllUnitService,
+  getItemByIdService,
+  getItemHsnService,
+} from "../services/item-service";
 
-// item controller start 
+// item controller start
 export const handleItemController = async (req: Request, res: Response) => {
   const { name, code, saleAmount, saleTaxAmount, hsn, unit } = req.body;
   if (!name || !code || !saleAmount || !saleTaxAmount || !hsn || !unit) {
@@ -24,7 +30,7 @@ export const handleItemController = async (req: Request, res: Response) => {
   const Itemhsn = await hsn.findOne({ hsn: 123 });
 
   if (!Itemhsn) {
-    return res.status(400).json({ mewssage: "HSN is invalid" })
+    return res.status(400).json({ mewssage: "HSN is invalid" });
   }
   const newAmount = await (saleAmount + saleTaxAmount);
   console.log(newAmount);
@@ -65,7 +71,6 @@ export const handleItemController = async (req: Request, res: Response) => {
 };
 // item controller end
 
-
 // item unit controller
 export const handleItemUnitController = async (req: Request, res: Response) => {
   try {
@@ -88,8 +93,9 @@ export const handleItemHsnController = async (req: Request, res: Response) => {
   }
 };
 
-
-{/* get all items controller */ }
+{
+  /* get all items controller */
+}
 export const handleAllItemController = async (req: Request, res: Response) => {
   try {
     const response = await getAllItemService();
@@ -97,9 +103,11 @@ export const handleAllItemController = async (req: Request, res: Response) => {
   } catch (error: any) {
     res.status(400).send({ error: error.message });
   }
-}
+};
 
-{/* get items by id controller */ }
+{
+  /* get items by id controller */
+}
 export const handleItemByIdController = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
@@ -110,13 +118,15 @@ export const handleItemByIdController = async (req: Request, res: Response) => {
     }
 
     const response = await getItemByIdService(req.params.id);
-    res.status(200).send({ response });
+    res.status(200).send({ success: true, response });
   } catch (error: any) {
     res.status(400).send({ error: error.message });
   }
-}
+};
 
-{/* delete items by id controller */ }
+{
+  /* delete items by id controller */
+}
 export const deleteItemController = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
@@ -132,12 +142,14 @@ export const deleteItemController = async (req: Request, res: Response) => {
         .send({ success: false, message: "Invalid Id provided." });
     }
     const deleteItem = await deleteItemService(id);
-    res.status(200).send({ success: true, message: "Item deleted Successful" })
+    res.status(200).send({ success: true, message: "Item deleted Successful" });
   } catch (error: any) {
     res.status(400).send({ error: error.message });
   }
+};
+{
+  /* update items by id controller */
 }
-{/* update items by id controller */ }
 export const handleUpdatePartyController = async (
   req: Request,
   res: Response
@@ -163,8 +175,8 @@ export const handleUpdatePartyController = async (
           code: req.body.code,
           saleAmount: req.body.saleAmount,
           saleTaxAmount: req.body.saleTaxAmount,
-          avatar: req.file?.filename
-        }
+          avatar: req.file?.filename,
+        },
       },
       { new: true }
     );
