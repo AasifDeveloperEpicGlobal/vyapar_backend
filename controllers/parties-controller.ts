@@ -11,9 +11,9 @@ import State from "../models/state";
 import { userInfo } from "os";
 import users from "../models/users";
 export const handlePartyController = async (req: Request, res: Response) => {
-  const { name, gstin, gst, unregisteredcustomer, email, address, state } =
+  const { name, number, gst, unregisteredcustomer, email, address, state } =
     req.body;
-  if (!name || !gstin || !gst || !email || !address || !state) {
+  if (!name || !number || !gst || !email || !address || !state) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
@@ -26,24 +26,24 @@ export const handlePartyController = async (req: Request, res: Response) => {
   }
 
   //Check number validation..
-  const partyNumber = await parties.findOne({ gst });
-  if (partyNumber) {
+  const partyGst = await parties.findOne({ gst });
+  if (partyGst) {
     return res
       .status(400)
       .json({ message: "gst already exists, Enter a unique Number" });
   }
 
   //Check GSTIN validation..
-  const partyGSTIN = await parties.findOne({ gstin });
-  if (partyGSTIN) {
+  const partyNumber = await parties.findOne({ number });
+  if (partyNumber) {
     return res
       .status(400)
-      .json({ message: "GSTIN already exists, Enter a unique GSTIN" });
+      .json({ message: "Number already exists, Enter a unique Number" });
   }
   try {
     const createParties = await parties.create({
       name,
-      gstin,
+      number,
       gst,
       unregisteredcustomer: Array.isArray(unregisteredcustomer)
         ? unregisteredcustomer
@@ -153,13 +153,11 @@ export const handleUpdatePartyController = async (
       { new: true }
     );
 
-    res
-      .status(200)
-      .send({
-        success: true,
-        message: "Party Updated Successful.",
-        updateParty,
-      });
+    res.status(200).send({
+      success: true,
+      message: "Party Updated Successful.",
+      updateParty,
+    });
   } catch (error: any) {
     res.status(400).send({ error: error.message });
   }

@@ -6,16 +6,16 @@ const partySchema = new Schema(
       type: String,
       required: true,
     },
-    gstin: {
+    number: {
       type: String,
       required: true,
-      validate: {
-        validator: function (v: any) {
-          var re = /\d{2}[A-Z]{5}\d{4}[A-Z]{1}[A-Z\d]{1}[Z]{1}[A-Z\d]{1}/;
-          return !v || !v.trim().length || re.test(v);
-        },
-        message: "Provided gstin number is invalid.",
-      },
+      // validate: {
+      //   validator: function (v: any) {
+      //     var re = /\d{2}[A-Z]{5}\d{4}[A-Z]{1}[A-Z\d]{1}[Z]{1}[A-Z\d]{1}/;
+      //     return !v || !v.trim().length || re.test(v);
+      //   },
+      //   message: "Provided gstin number is invalid.",
+      // },
     },
     gst: {
       type: String,
