@@ -7,6 +7,7 @@ import {
   handleUpdatePartyController,
 } from "../controllers/parties-controller";
 import { isAdmin } from "../middlewares/utils";
+import parties from "../models/parties";
 const router = Router();
 
 //parties router
@@ -15,5 +16,33 @@ router.get("/", handleAllPartyController);
 router.get("/:id", handlePartyByIdController);
 router.delete("/:id", handleDeletePartyController);
 router.put("/:id", handleUpdatePartyController);
+
+// search by name
+router.get("/partySearch/:key", async (req, res) => {
+  try {
+    const data = await parties
+      .find({
+        $or: [{ name: { $regex: req.params.key, $options: "$i" } }],
+      })
+      .limit(10);
+    res.json(data);
+  } catch (error) {
+    res.json(404);
+  }
+});
+
+// search by mobile no
+router.get("/partySearchMobile/:key", async (req, res) => {
+  try {
+    const data = await parties
+      .find({
+        $or: [{ number: { $regex: req.params.key, $options: "$i" } }],
+      })
+      .limit(10);
+    res.json(data);
+  } catch (error) {
+    res.json(404);
+  }
+});
 
 export default router;

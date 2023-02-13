@@ -10,10 +10,11 @@ import {
 import State from "../models/state";
 import { userInfo } from "os";
 import users from "../models/users";
+
 export const handlePartyController = async (req: Request, res: Response) => {
-  const { name, number, gst, unregisteredcustomer, email, address, state } =
+  const { name, gst, number, unregisteredcustomer, email, address, state } =
     req.body;
-  if (!name || !number || !gst || !email || !address || !state) {
+  if (!name || !gst || !number || !email || !address || !state) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
@@ -43,8 +44,8 @@ export const handlePartyController = async (req: Request, res: Response) => {
   try {
     const createParties = await parties.create({
       name,
-      number,
       gst,
+      number,
       unregisteredcustomer: Array.isArray(unregisteredcustomer)
         ? unregisteredcustomer
         : undefined,

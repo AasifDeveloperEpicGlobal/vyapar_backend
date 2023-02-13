@@ -204,4 +204,18 @@ router.put("/:id", async (req, res) => {
   }
 });
 
+// item search by name
+router.get("/itemSearch/:key", async (req, res) => {
+  try {
+    const data = await accessoriesItems
+      .find({
+        $or: [{ name: { $regex: req.params.key, $options: "$i" } }],
+      })
+      .limit(10);
+    res.json(data);
+  } catch (error) {
+    res.json(404);
+  }
+});
+
 export default router;
