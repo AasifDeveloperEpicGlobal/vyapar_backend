@@ -1,19 +1,21 @@
 import { Router } from "express";
 import {
-    addPurchaseRowController,
-    deletePurchaseController,
-    deletePurchaseRowController,
-    getAllPurchaseController,
-    getPurchaseByIdController,
-    getPurchaseRowController,
-    handlePurchaseController,
-    updatePurchaseController,
-    updatePurchaseRowController
+  addPurchaseRowController,
+  deletePurchaseController,
+  deletePurchaseRowController,
+  getAllPurchaseController,
+  getPurchaseByIdController,
+  getPurchaseRowController,
+  handlePurchaseController,
+  handlePurchaseSchemaController,
+  updatePurchaseController,
+  updatePurchaseRowController,
 } from "../controllers/purchase-controller";
 const router = Router();
 
 // purchase router...
 router.post("/", handlePurchaseController);
+router.post("/purchaseSchema", handlePurchaseSchemaController);
 router.get("/", getAllPurchaseController);
 router.get("/:id", getPurchaseByIdController);
 router.delete("/:id", deletePurchaseController);

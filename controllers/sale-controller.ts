@@ -2,9 +2,9 @@ import { Request, Response } from "express";
 import { isValidObjectId } from "mongoose";
 import row from "../models/row";
 import sale from "../models/sale";
+import saleSchema from "../models/saleSchema";
 import {
   deleteSaleService,
-  generateInvoiceNumber,
   getAllSaleService,
   getRowService,
   getSaleByIdService,
@@ -24,7 +24,6 @@ export const handleSaleController = async (req: Request, res: Response) => {
       saletax,
       paymentMode,
       description,
-      amount,
     } = req.body;
     if (!name || !number || !itemName || !unit || !address) {
       return res
@@ -33,7 +32,7 @@ export const handleSaleController = async (req: Request, res: Response) => {
     }
 
     // saletax.taxableAmount = ((saletax?.taxableAmount * saletax?.tax) / 100) + 100;
-    const taxOnAmount = (saletax?.taxOnAmount * saletax?.tax) / 100 + 100;
+    // const taxOnAmount = (saletax?.taxOnAmount * saletax?.tax) / 100 + 100;
 
     // generating invoice number...
     //const invoiceNumber = generateInvoiceNumber();
@@ -53,7 +52,6 @@ export const handleSaleController = async (req: Request, res: Response) => {
       name,
       number,
       invoiceDate: newDate,
-      amount: taxOnAmount,
       itemName,
       address,
       qty,
@@ -280,5 +278,56 @@ export const deleteSaleRowController = async (req: Request, res: Response) => {
     });
   } catch (error: any) {
     res.status(500).send(error);
+  }
+};
+
+export const handleSaleSchemaController = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const { name, number, address, paymentMode, description, saleRow } =
+      req.body;
+    if (!name) {
+      return res
+        .status(500)
+        .send({ success: false, message: "Name is required" });
+    }
+
+    if (!number) {
+      return res
+        .status(500)
+        .send({ success: false, message: "Number is required" });
+    }
+
+    const findDuplicateField = await saleSchema.findOne({
+      number,
+    });
+
+    if (findDuplicateField) {
+      return res.status(400).send({
+        success: false,
+        message: "Number already exists & must be unique",
+      });
+    }
+
+    let date = new Date();
+    const newDate = date.toString();
+    const sales = new saleSchema({
+      name,
+      number,
+      invoiceDate: newDate,
+      address,
+      paymentMode,
+      description,
+      saleRow,
+    });
+
+    sales.save((err, data) => {
+      if (err) throw err;
+      res.send({ success: true, message: "Sale Added Successful", data });
+    });
+  } catch (error: any) {
+    res.status(500).send(error?.message);
   }
 };

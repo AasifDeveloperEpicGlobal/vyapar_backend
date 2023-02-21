@@ -15,6 +15,8 @@ import purchaseRoutes from "./routes/purchase";
 import requestRoutes from "./routes/request";
 import reviewsRoutes from "./routes/review";
 import { isAdmin } from "./middlewares/utils";
+import saleCounter from "./models/saleCounters";
+import purchaseCounter from "./models/purchaseCounters";
 
 mongoose.set("strictQuery", false);
 
@@ -49,8 +51,15 @@ server.listen(port, () => {
 app.get("/", (req, res) => {
   res.status(200).json({ name: "Api Worked Fine" });
 });
-app.get("/api", (req, res) => {
-  res.status(200).json({ name: "Hello World! 2" });
+
+// invoice number for sale
+app.get("/api/sale-invoice", async function (req, res) {
+  try {
+    const getSaleInvoice = await saleCounter.find();
+    res.status(200).send({ success: true, data: getSaleInvoice });
+  } catch (error: any) {
+    res.status(400).send({ error: error.message });
+  }
 });
 
 // Signup and login routes
@@ -66,3 +75,13 @@ app.use("/api/request", requestRoutes);
 app.use("/api/reviews", reviewsRoutes);
 
 // app.use("/api/beds", testRoutes);
+
+// invoice number for purchase
+app.get("/api/purchase-invoice", async function (req, res) {
+  try {
+    const getPurchaseInvoice = await purchaseCounter.find();
+    res.status(200).send({ success: true, data: getPurchaseInvoice });
+  } catch (error: any) {
+    res.status(400).send({ error: error.message });
+  }
+});
