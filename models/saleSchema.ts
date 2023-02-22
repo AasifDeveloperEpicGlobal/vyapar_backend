@@ -3,10 +3,12 @@ import saleCounter from "./saleCounters";
 
 export interface SaleSchema extends Document {
   name: string;
-  number: string;
+  mobile: string;
   address: string;
-  invoiceDate: Date;
+  invoiceDate: string;
   saleId: number;
+
+  billing: any;
 
   saleRow: {
     row: [
@@ -16,10 +18,10 @@ export interface SaleSchema extends Document {
         unit: string;
         price: number;
         saletax: {
-          tax: number;
-          taxable_amount: number;
+          tax: string;
+          taxable_amount: string;
         };
-        amount: number;
+        amount: string;
       }
     ];
   };
@@ -32,29 +34,30 @@ const saleSchema = new Schema<SaleSchema>(
   {
     name: {
       type: String,
-      required: true,
+      required: false,
     },
-    number: {
+    mobile: {
       type: String,
-      required: true,
+      required: false,
       unique: true,
     },
     invoiceDate: {
-      type: Date,
-      default: Date.now,
+      type: String,
+      required: false,
     },
     address: {
       type: String,
-      required: true,
+      required: false,
     },
     saleId: {
       type: Number,
       required: false,
     },
+    billing: { type: Array, required: false },
     saleRow: {
       row: [
         {
-          itemName: { type: String, required: true },
+          itemName: { type: String, required: false },
           qty: { type: Number, required: false },
           unit: { type: String, required: false },
           price: { type: Number, required: false },

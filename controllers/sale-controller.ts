@@ -286,22 +286,23 @@ export const handleSaleSchemaController = async (
   res: Response
 ) => {
   try {
-    const { name, number, address, paymentMode, description, saleRow } =
-      req.body;
-    if (!name) {
+    const {
+      name,
+      mobile,
+      address,
+      paymentMode,
+      description,
+      saleRow,
+      testRow,
+    } = req.body;
+    if (!name || !mobile) {
       return res
         .status(500)
-        .send({ success: false, message: "Name is required" });
-    }
-
-    if (!number) {
-      return res
-        .status(500)
-        .send({ success: false, message: "Number is required" });
+        .send({ success: false, message: "All fields are required" });
     }
 
     const findDuplicateField = await saleSchema.findOne({
-      number,
+      mobile,
     });
 
     if (findDuplicateField) {
@@ -313,14 +314,16 @@ export const handleSaleSchemaController = async (
 
     let date = new Date();
     const newDate = date.toString();
+    console.log("aif bhai", saleRow);
     const sales = new saleSchema({
       name,
-      number,
+      mobile,
       invoiceDate: newDate,
       address,
       paymentMode,
       description,
       saleRow,
+      billing: saleRow,
     });
 
     sales.save((err, data) => {
