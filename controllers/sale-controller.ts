@@ -286,15 +286,8 @@ export const handleSaleSchemaController = async (
   res: Response
 ) => {
   try {
-    const {
-      name,
-      mobile,
-      address,
-      paymentMode,
-      description,
-      saleRow,
-      testRow,
-    } = req.body;
+    const { name, mobile, address, paymentMode, description, saleRow } =
+      req.body;
     if (!name || !mobile) {
       return res
         .status(500)

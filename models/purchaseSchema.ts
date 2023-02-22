@@ -4,10 +4,12 @@ import saleCounter from "./saleCounters";
 
 export interface PurchaseSchema extends Document {
   name: string;
-  number: string;
+  mobile: string;
   address: string;
-  invoiceDate: Date;
+  invoiceDate: string;
   purchaseId: number;
+
+  billing: any;
 
   purchaseRow: {
     row: [
@@ -33,29 +35,30 @@ const purchaseSchema = new Schema<PurchaseSchema>(
   {
     name: {
       type: String,
-      required: true,
+      required: false,
     },
-    number: {
+    mobile: {
       type: String,
-      required: true,
+      required: false,
       unique: true,
     },
     invoiceDate: {
-      type: Date,
-      default: Date.now,
+      type: String,
+      required: false,
     },
     address: {
       type: String,
-      required: true,
+      required: false,
     },
     purchaseId: {
       type: Number,
       required: false,
     },
+    billing: { type: Array, required: false },
     purchaseRow: {
       row: [
         {
-          itemName: { type: String, required: true },
+          itemName: { type: String, required: false },
           qty: { type: Number, required: false },
           unit: { type: String, required: false },
           price: { type: Number, required: false },

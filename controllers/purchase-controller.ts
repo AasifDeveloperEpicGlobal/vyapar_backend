@@ -314,22 +314,16 @@ export const handlePurchaseSchemaController = async (
   res: Response
 ) => {
   try {
-    const { name, number, address, paymentMode, description, purchaseRow } =
+    const { name, mobile, address, paymentMode, description, purchaseRow } =
       req.body;
-    if (!name) {
+    if (!name || !mobile) {
       return res
         .status(500)
-        .send({ success: false, message: "Name is required" });
-    }
-
-    if (!number) {
-      return res
-        .status(500)
-        .send({ success: false, message: "Number is required" });
+        .send({ success: false, message: "All fields are required" });
     }
 
     const findDuplicateField = await purchaseSchema.findOne({
-      number,
+      mobile,
     });
 
     if (findDuplicateField) {
@@ -341,17 +335,18 @@ export const handlePurchaseSchemaController = async (
 
     let date = new Date();
     const newDate = date.toString();
-    const sales = new purchaseSchema({
+    const purchaseSaved = new purchaseSchema({
       name,
-      number,
+      mobile,
       invoiceDate: newDate,
       address,
       paymentMode,
       description,
       purchaseRow,
+      billing: purchaseRow,
     });
 
-    sales.save((err, data) => {
+    purchaseSaved.save((err, data) => {
       if (err) throw err;
       res.send({ success: true, message: "Purchase Added Successful", data });
     });
