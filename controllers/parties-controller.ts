@@ -7,14 +7,19 @@ import {
   getAllStateService,
   getPartiesByIdService,
 } from "../services/parties-service";
-import State from "../models/state";
-import { userInfo } from "os";
-import users from "../models/users";
 
 export const handlePartyController = async (req: Request, res: Response) => {
-  const { name, gst, number, unregisteredcustomer, email, address, state } =
-    req.body;
-  if (!name || !gst || !number || !email || !address || !state) {
+  const {
+    name,
+    gst,
+    number,
+    unregisteredcustomer,
+    email,
+    address,
+    state,
+    pan,
+  } = req.body;
+  if (!name || !gst || !number || !email || !address || !state || !pan) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
@@ -31,7 +36,7 @@ export const handlePartyController = async (req: Request, res: Response) => {
   if (partyGst) {
     return res
       .status(400)
-      .json({ message: "gst already exists, Enter a unique Number" });
+      .json({ message: "gst already exists, Enter a unique GST*" });
   }
 
   //Check GSTIN validation..
@@ -39,7 +44,15 @@ export const handlePartyController = async (req: Request, res: Response) => {
   if (partyNumber) {
     return res
       .status(400)
-      .json({ message: "Number already exists, Enter a unique Number" });
+      .json({ message: "Number already exists, Enter a unique Number*" });
+  }
+
+  //Check pan card validations..
+  const panNumber = await parties.findOne({ pan });
+  if (panNumber) {
+    return res
+      .status(400)
+      .json({ message: "Pan card already exists, Enter a unique PAN*" });
   }
   try {
     const createParties = await parties.create({
@@ -52,6 +65,7 @@ export const handlePartyController = async (req: Request, res: Response) => {
       state,
       email,
       address,
+      pan,
     });
     res.clearCookie("access_token");
     res.json({ message: "Party Created Successful", data: createParties });
@@ -60,9 +74,7 @@ export const handlePartyController = async (req: Request, res: Response) => {
   }
 };
 
-{
-  /* get all parties controller */
-}
+// get all parties controller
 export const handleAllPartyController = async (req: Request, res: Response) => {
   // const { _id } = req.user;
   // console.log(req.user);
@@ -74,9 +86,7 @@ export const handleAllPartyController = async (req: Request, res: Response) => {
   }
 };
 
-{
-  /* get parties by id controller */
-}
+/* get parties by id controller */
 export const handlePartyByIdController = async (
   req: Request,
   res: Response
@@ -101,9 +111,7 @@ export const handlePartyByIdController = async (
   }
 };
 
-{
-  /* delete parties by id controller*/
-}
+/* delete parties by id controller*/
 export const handleDeletePartyController = async (
   req: Request,
   res: Response
@@ -128,9 +136,7 @@ export const handleDeletePartyController = async (
   }
 };
 
-{
-  /* update parties by id controller*/
-}
+/* update parties by id controller*/
 export const handleUpdatePartyController = async (
   req: Request,
   res: Response
@@ -164,9 +170,7 @@ export const handleUpdatePartyController = async (
   }
 };
 
-{
-  /* get parties state controller*/
-}
+/* get parties state controller*/
 export const handlePartystateController = async (
   req: Request,
   res: Response

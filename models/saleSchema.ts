@@ -1,11 +1,23 @@
 import { model, Schema } from "mongoose";
 import saleCounter from "./saleCounters";
 
+type discount = {
+  discount_tax: string;
+  discount_amount: string;
+};
+
+type tax = {
+  tax: string;
+  taxable_amount: string;
+};
+
 export interface SaleSchema extends Document {
   name: string;
   mobile: string;
   address: string;
   invoiceDate: string;
+  gstNumber: string;
+  state: string;
   saleId: number;
 
   billing: any;
@@ -17,10 +29,8 @@ export interface SaleSchema extends Document {
         qty: number;
         unit: string;
         price: number;
-        saletax: {
-          tax: string;
-          taxable_amount: string;
-        };
+        saletax: tax;
+        discount: discount;
         amount: string;
       }
     ];
@@ -45,6 +55,14 @@ const saleSchema = new Schema<SaleSchema>(
       type: String,
       required: false,
     },
+    gstNumber: {
+      type: String,
+      required: false,
+    },
+    state: {
+      type: String,
+      required: false,
+    },
     address: {
       type: String,
       required: false,
@@ -63,11 +81,21 @@ const saleSchema = new Schema<SaleSchema>(
           price: { type: Number, required: false },
           saletax: {
             tax: {
-              type: Number,
+              type: String,
               required: false,
             },
             taxable_amount: {
-              type: Number,
+              type: String,
+              required: false,
+            },
+          },
+          discount: {
+            discount_tax: {
+              type: String,
+              required: false,
+            },
+            discount_amount: {
+              type: String,
               required: false,
             },
           },

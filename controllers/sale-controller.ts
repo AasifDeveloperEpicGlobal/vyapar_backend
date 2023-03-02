@@ -286,8 +286,18 @@ export const handleSaleSchemaController = async (
   res: Response
 ) => {
   try {
-    const { name, mobile, address, paymentMode, description, saleRow } =
-      req.body;
+    const {
+      name,
+      mobile,
+      address,
+      invoiceDate,
+      gstNumber,
+      state,
+
+      paymentMode,
+      description,
+      saleRow,
+    } = req.body;
     if (!name || !mobile) {
       return res
         .status(500)
@@ -305,14 +315,14 @@ export const handleSaleSchemaController = async (
       });
     }
 
-    let date = new Date();
-    const newDate = date.toString();
-    console.log("aif bhai", saleRow);
     const sales = new saleSchema({
       name,
       mobile,
-      invoiceDate: newDate,
+      invoiceDate,
       address,
+      gstNumber,
+      state,
+
       paymentMode,
       description,
       saleRow,

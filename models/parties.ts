@@ -10,16 +10,35 @@ const partySchema = new Schema(
       type: String,
       required: true,
       validate: {
-        validator: function (v: any) {
+        validator: function (value: any) {
           var re = /\d{2}[A-Z]{5}\d{4}[A-Z]{1}[A-Z\d]{1}[Z]{1}[A-Z\d]{1}/;
-          return !v || !v.trim().length || re.test(v);
+          return !value || !value.trim().length || re.test(value);
         },
-        message: "Provided gstin number is invalid.",
+        message: "Provided Gst number is invalid.",
       },
     },
     number: {
       type: String,
       required: true,
+      validate: {
+        validator: function (value: any) {
+          var mobile =
+            /^\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/;
+          return !value || !value.trim().length || mobile.test(value);
+        },
+        message: "Provided Mobile number is invalid.",
+      },
+    },
+    pan: {
+      type: String,
+      required: true,
+      validate: {
+        validator: function (value: any) {
+          var pan = /([A-Z]){5}([0-9]){4}([A-Z]){1}$/;
+          return !value || !value.trim().length || pan.test(value);
+        },
+        message: "Provided Pan number is invalid",
+      },
     },
     unregisteredcustomer: [
       {
@@ -34,7 +53,14 @@ const partySchema = new Schema(
     email: {
       type: String,
       required: true,
-      validate: /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/,
+      validate: {
+        validator: function (value: any) {
+          var email =
+            /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+          return !value || !value.trim().length || email.test(value);
+        },
+        message: "Provided email number is invalid",
+      },
       unique: true,
       lowercase: true,
     },

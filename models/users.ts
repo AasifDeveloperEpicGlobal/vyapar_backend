@@ -18,7 +18,14 @@ const userSchema = new Schema<IUser>({
   email: {
     type: String,
     required: true,
-    validate: /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/,
+    validate: {
+      validator: function (value: any) {
+        var email =
+          /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+        return !value || !value.trim().length || email.test(value);
+      },
+      message: "Provided email number is invalid",
+    },
     unique: true,
   },
   password: {
@@ -43,13 +50,13 @@ const userSchema = new Schema<IUser>({
   role: {
     type: String,
     required: true,
-    default: "user"
+    default: "user",
   },
   isRegistered: {
     type: Boolean,
     required: true,
-    default: false
-  }
+    default: false,
+  },
 });
 
 export default model<IUser>("users", userSchema);
