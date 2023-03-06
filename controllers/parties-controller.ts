@@ -66,6 +66,7 @@ export const handlePartyController = async (req: Request, res: Response) => {
       email,
       address,
       pan,
+      createdBy: req.user._id,
     });
     res.clearCookie("access_token");
     res.json({ message: "Party Created Successful", data: createParties });
@@ -76,10 +77,9 @@ export const handlePartyController = async (req: Request, res: Response) => {
 
 // get all parties controller
 export const handleAllPartyController = async (req: Request, res: Response) => {
-  // const { _id } = req.user;
-  // console.log(req.user);
+  const { _id } = req.user;
   try {
-    const response = await getAllPartiesService();
+    const response = await getAllPartiesService(_id);
     res.status(200).send({ success: true, response });
   } catch (error: any) {
     res.status(400).send({ error: error.message });

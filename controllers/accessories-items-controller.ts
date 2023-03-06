@@ -97,8 +97,9 @@ export const handleItemHsnController = async (req: Request, res: Response) => {
   /* get all items controller */
 }
 export const handleAllItemController = async (req: Request, res: Response) => {
+  const { _id } = req.user;
   try {
-    const response = await getAllItemService();
+    const response = await getAllItemService(_id);
     res.status(200).send({ success: true, response });
   } catch (error: any) {
     res.status(400).send({ error: error.message });

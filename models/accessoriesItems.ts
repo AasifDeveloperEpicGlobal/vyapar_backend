@@ -1,4 +1,5 @@
-import { model, Schema, Document } from "mongoose";
+import { ObjectId } from "mongodb";
+import mongoose, { model, Schema, Document } from "mongoose";
 
 interface Accessories extends Document {
   code: string;
@@ -15,6 +16,7 @@ interface Accessories extends Document {
   purchaseAmount: string;
   purchaseTaxAmount: string;
   noneTax: string;
+  createdBy: any;
 }
 
 const accessoriesIconSchema = new Schema<Accessories>(
@@ -70,8 +72,8 @@ const accessoriesIconSchema = new Schema<Accessories>(
     noneTax: {
       type: String,
       required: false,
-      //   default: "none",
     },
+    createdBy: { ref: "users", type: mongoose.Schema.Types.ObjectId },
   },
   {
     timestamps: true,

@@ -6,8 +6,8 @@ import saleSchema, { SaleSchema } from "../models/saleSchema";
 {
   /* get all sale service */
 }
-export const getAllSaleService = async () => {
-  const response = await saleSchema.find({});
+export const getAllSaleService = async (userId: any) => {
+  const response = await saleSchema.find({ createdBy: userId });
   return response;
 };
 

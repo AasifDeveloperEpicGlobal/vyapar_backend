@@ -1,4 +1,4 @@
-import { model, Schema } from "mongoose";
+import mongoose, { model, Schema } from "mongoose";
 
 const partySchema = new Schema(
   {
@@ -68,6 +68,7 @@ const partySchema = new Schema(
       type: String,
       required: true,
     },
+    createdBy: { ref: "users", type: mongoose.Schema.Types.ObjectId },
   },
   {
     timestamps: true,

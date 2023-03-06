@@ -73,9 +73,10 @@ export const handleSaleController = async (req: Request, res: Response) => {
 
 // get all sale controller
 export const handleAllSaleController = async (req: Request, res: Response) => {
+  const { _id } = req.user;
   try {
-    const Sale = await getAllSaleService();
-    res.status(200).send({ success: true, message: Sale });
+    const Sale = await getAllSaleService({ _id });
+    res.status(200).send(Sale);
   } catch (error: any) {
     res.status(400).send({ error: error.message });
   }
@@ -92,7 +93,7 @@ export const handleSaleByIdController = async (req: Request, res: Response) => {
     }
 
     const response = await getSaleByIdService(req.params.id);
-    res.status(200).send({ response });
+    res.status(200).send(response);
   } catch (error: any) {
     res.status(400).send({ error: error.message });
   }
@@ -297,6 +298,7 @@ export const handleSaleSchemaController = async (
       paymentMode,
       description,
       saleRow,
+      totalAmount,
     } = req.body;
     if (!name || !mobile) {
       return res
@@ -327,6 +329,8 @@ export const handleSaleSchemaController = async (
       description,
       saleRow,
       billing: saleRow,
+      createdBy: req.user._id,
+      totalAmount,
     });
 
     sales.save((err, data) => {

@@ -17,12 +17,14 @@ export const securePassword = async (password: string) => {
 };
 
 //VERIFY JWT
-export const verifyJWT = (token: string) => {
-  return jwt.verify(token, process.env.JWT_SECRET_KEY as any);
+export const verifyJWT = async (token: string) => {
+  console.log("vefiryyy", jwt.verify(token, "heksdhshd"));
+  return jwt.verify(token, "6656fgfdfdgf");
 };
 
 //DECODE JWT
-export const decodeJWT = (token: string) => {
+export const decodeJWT = async (token: string) => {
+  console.log("decode Token", jwt.decode(token));
   return jwt.decode(token);
 };
 
@@ -34,7 +36,7 @@ export const registerUserService = async (
   mobile: string,
   company: string,
   role: string,
-  isRegistered: boolean,
+  isRegistered: boolean
 ) => {
   const user = await users.findOne({ email });
   if (user) throw new Error("User already exists");

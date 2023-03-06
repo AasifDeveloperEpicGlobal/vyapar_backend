@@ -37,7 +37,11 @@ export const handleRegisterController = async (req: Request, res: Response) => {
 export const handleLoginController = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
-    const user = await users.findOne({ email: email });
+
+    const user = await users.findOne(
+      { email: email }
+      // { email: 1, role: 1, mobile: 1 }
+    );
     if (user) {
       const userPassword = await bcryptjs.compare(password, user.password);
       if (userPassword) {

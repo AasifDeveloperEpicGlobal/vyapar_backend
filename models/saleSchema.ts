@@ -1,4 +1,4 @@
-import { model, Schema } from "mongoose";
+import mongoose, { model, Schema } from "mongoose";
 import saleCounter from "./saleCounters";
 
 type discount = {
@@ -18,6 +18,7 @@ export interface SaleSchema extends Document {
   invoiceDate: string;
   gstNumber: string;
   state: string;
+  createdBy: any;
   saleId: number;
 
   billing: any;
@@ -35,7 +36,7 @@ export interface SaleSchema extends Document {
       }
     ];
   };
-
+  totalAmount: string;
   paymentMode: string;
   description: string;
 }
@@ -67,6 +68,7 @@ const saleSchema = new Schema<SaleSchema>(
       type: String,
       required: false,
     },
+    createdBy: { ref: "users", type: mongoose.Types.ObjectId },
     saleId: {
       type: Number,
       required: false,
@@ -105,6 +107,10 @@ const saleSchema = new Schema<SaleSchema>(
           },
         },
       ],
+    },
+    totalAmount: {
+      type: String,
+      required: false,
     },
     paymentMode: {
       type: String,

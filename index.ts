@@ -14,7 +14,7 @@ import saleRoutes from "./routes/sale";
 import purchaseRoutes from "./routes/purchase";
 import requestRoutes from "./routes/request";
 import reviewsRoutes from "./routes/review";
-import { isAdmin } from "./middlewares/utils";
+import { isUser } from "./middlewares/utils";
 import saleCounter from "./models/saleCounters";
 import purchaseCounter from "./models/purchaseCounters";
 
@@ -64,12 +64,12 @@ app.get("/api/sale-invoice", async function (req, res) {
 
 // Signup and login routes
 app.use("/api/auth", authRoutes);
-app.use("/api/parties", partyRoutes);
+app.use("/api/parties", isUser, partyRoutes);
 app.use("/api/state", stateRoutes);
-app.use("/api/accessories", accessoriesItem);
+app.use("/api/accessories", isUser, accessoriesItem);
 app.use("/api/unit", unitRoutes);
 app.use("/api/hsn", hsnRoutes);
-app.use("/api/sale", saleRoutes);
+app.use("/api/sale", isUser, saleRoutes);
 app.use("/api/purchase", purchaseRoutes);
 app.use("/api/request", requestRoutes);
 app.use("/api/reviews", reviewsRoutes);

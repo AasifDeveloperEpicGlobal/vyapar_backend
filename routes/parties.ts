@@ -6,7 +6,6 @@ import {
   handlePartyController,
   handleUpdatePartyController,
 } from "../controllers/parties-controller";
-import { isAdmin } from "../middlewares/utils";
 import parties from "../models/parties";
 const router = Router();
 
@@ -19,10 +18,12 @@ router.put("/:id", handleUpdatePartyController);
 
 // search by name
 router.get("/partySearch/:key", async (req, res) => {
+  const user = req.user;
   try {
     const data = await parties
       .find({
         $or: [{ name: { $regex: req.params.key, $options: "$i" } }],
+        createdBy: user?._id,
       })
       .limit(10);
     res.json(data);

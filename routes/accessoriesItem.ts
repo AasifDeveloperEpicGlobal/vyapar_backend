@@ -90,6 +90,7 @@ router.post(
         purchaseAmount,
         purchaseTaxAmount,
         noneTax,
+        createdBy: req.user._id,
       });
 
       accessoriesIcon.save((err, data) => {
@@ -206,10 +207,12 @@ router.put("/:id", async (req, res) => {
 
 // item search by name
 router.get("/itemSearch/:key", async (req, res) => {
+  const user = req.user;
   try {
     const data = await accessoriesItems
       .find({
         $or: [{ name: { $regex: req.params.key, $options: "$i" } }],
+        createdBy: user?._id,
       })
       .limit(10);
     res.json(data);

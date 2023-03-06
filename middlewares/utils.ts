@@ -1,6 +1,7 @@
 const Jwt = require("jsonwebtoken");
 import { Request, Response, NextFunction } from "express";
 import { decodeJWT, verifyJWT } from "../services/auth-service";
+import jwtDecode from "jwt-decode";
 
 // Verify JWT token...
 export const isVerifyToken = async (
@@ -65,9 +66,11 @@ export const isAuthenticated = async (
   }
   try {
     const decoded = decodeJWT(token) as any;
-    const verified = verifyJWT(token);
+    const verified = await verifyJWT(token);
+    console.log("toekn testinggg", decoded, verified);
     if (decoded && verified) {
       req.user = decoded?.user;
+      console.log("Hello");
       next();
     } else {
       res.clearCookie("access_token");
@@ -78,9 +81,21 @@ export const isAuthenticated = async (
   }
 };
 
-export const isUser = (req: Request, res: Response, next: NextFunction) => {
-  const token = req.headers["authorization"];
-  console.log({ token });
+export const isUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const authToken = req.headers.cookie?.split("access_token=")[1] as string;
+  let token: string = authToken;
+  // console.log("cookieToken :: ", req.headers.cookie?.split("access_token=")[1]);
+  // if (authToken) {
+  //   token = authToken;
+  //   return;
+  // token = cookieToken;
+  // console.log("cookieToken :: ", cookieToken);
+  // }
+
   if (!token) {
     return res.status(401).json({
       success: false,
@@ -88,14 +103,8 @@ export const isUser = (req: Request, res: Response, next: NextFunction) => {
     });
   }
   try {
-    const verify = verifyJWT(token);
-    if (!verify) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
-    const decoded = decodeJWT(token) as any;
-    if (decoded?.user?.role !== "user") {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
+    const decoded = await Jwt.verify(token, process.env.JWT_SECRET_KEY);
+    req.user = decoded.user;
     next();
   } catch (error: any) {
     res.status(500).json({ error: error.message });
