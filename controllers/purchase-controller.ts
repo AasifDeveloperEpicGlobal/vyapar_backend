@@ -73,8 +73,9 @@ export const handlePurchaseController = async (req: Request, res: Response) => {
 
 // get all purchase controller..
 export const getAllPurchaseController = async (req: Request, res: Response) => {
+  const { _id } = req.user;
   try {
-    const Purchase = await getAllPurchaseService();
+    const Purchase = await getAllPurchaseService({ _id });
     res.status(200).send({ success: true, message: Purchase });
   } catch (error: any) {
     res.status(500).send({ error: error.message });
@@ -314,8 +315,19 @@ export const handlePurchaseSchemaController = async (
   res: Response
 ) => {
   try {
-    const { name, mobile, address, paymentMode, description, purchaseRow } =
-      req.body;
+    const {
+      name,
+      mobile,
+      address,
+      invoiceDate,
+      gstNumber,
+      state,
+
+      paymentMode,
+      description,
+      purchaseRow,
+      totalAmount,
+    } = req.body;
     if (!name || !mobile) {
       return res
         .status(500)
@@ -338,12 +350,17 @@ export const handlePurchaseSchemaController = async (
     const purchaseSaved = new purchaseSchema({
       name,
       mobile,
-      invoiceDate: newDate,
+      invoiceDate,
       address,
+      gstNumber,
+      state,
+
       paymentMode,
       description,
       purchaseRow,
       billing: purchaseRow,
+      createdBy: req.user._id,
+      totalAmount,
     });
 
     purchaseSaved.save((err, data) => {

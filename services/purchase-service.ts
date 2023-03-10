@@ -21,8 +21,8 @@ export const generateBillNumber1 = () => {
 {
   /* get all purchase service */
 }
-export const getAllPurchaseService = async () => {
-  const response = await purchaseSchema.find({});
+export const getAllPurchaseService = async (userId: any) => {
+  const response = await purchaseSchema.find({ createdBy: userId });
   return response;
 };
 

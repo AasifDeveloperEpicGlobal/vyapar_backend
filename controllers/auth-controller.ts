@@ -1,11 +1,13 @@
 import { Request, Response } from "express";
 import {
+  getUserService,
   registerAdminService,
   registerUserService,
 } from "../services/auth-service";
 const bcryptjs = require("bcryptjs");
 import users from "../models/users";
 import { isValidObjectId } from "mongoose";
+import { getAllPartiesService } from "../services/parties-service";
 const jwt = require("jsonwebtoken");
 
 // register user controller start
@@ -160,5 +162,14 @@ export const dataCount = async (req: Request, res: Response) => {
       .send({ success: true, message: "Counting users", data: count_data });
   } catch (error: any) {
     res.status(500).json({ error: error.message });
+  }
+};
+
+export const getUserController = async (req: Request, res: Response) => {
+  try {
+    const response = await getUserService();
+    res.status(200).send({ success: true, response });
+  } catch (error: any) {
+    res.status(400).send({ error: error.message });
   }
 };

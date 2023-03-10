@@ -87,3 +87,8 @@ export const registerAdminService = async (
   await newAdmin.save();
   return newAdmin;
 };
+
+export const getUserService = async () => {
+  const response = await users.find();
+  return response;
+};

@@ -70,7 +70,7 @@ app.use("/api/accessories", isUser, accessoriesItem);
 app.use("/api/unit", unitRoutes);
 app.use("/api/hsn", hsnRoutes);
 app.use("/api/sale", isUser, saleRoutes);
-app.use("/api/purchase", purchaseRoutes);
+app.use("/api/purchase", isUser, purchaseRoutes);
 app.use("/api/request", requestRoutes);
 app.use("/api/reviews", reviewsRoutes);
 

@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   dataCount,
   deleteRegisterController,
+  getUserController,
   handleLoginController,
   handleLogoutController,
   handleRegisterAdminController,
@@ -21,5 +22,8 @@ router.get("/user-count", dataCount);
 
 //delete register account
 router.delete("/:id", deleteRegisterController);
+
+//get uses
+router.get("/get_user", getUserController);
 
 export default router;

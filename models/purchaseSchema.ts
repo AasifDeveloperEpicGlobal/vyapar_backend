@@ -1,12 +1,23 @@
-import { model, Schema } from "mongoose";
+import mongoose, { model, Schema } from "mongoose";
 import purchaseCounter from "./purchaseCounters";
-import saleCounter from "./saleCounters";
+type discount = {
+  discount_tax: string;
+  discount_amount: string;
+};
+
+type tax = {
+  tax: string;
+  taxable_amount: string;
+};
 
 export interface PurchaseSchema extends Document {
   name: string;
   mobile: string;
   address: string;
   invoiceDate: string;
+  gstNumber: string;
+  state: string;
+  createdBy: any;
   purchaseId: number;
 
   billing: any;
@@ -18,15 +29,13 @@ export interface PurchaseSchema extends Document {
         qty: number;
         unit: string;
         price: number;
-        purchasetax: {
-          tax: number;
-          taxable_amount: number;
-        };
-        amount: number;
+        saletax: tax;
+        discount: discount;
+        amount: string;
       }
     ];
   };
-
+  totalAmount: string;
   paymentMode: string;
   description: string;
 }
@@ -46,10 +55,19 @@ const purchaseSchema = new Schema<PurchaseSchema>(
       type: String,
       required: false,
     },
+    gstNumber: {
+      type: String,
+      required: false,
+    },
+    state: {
+      type: String,
+      required: false,
+    },
     address: {
       type: String,
       required: false,
     },
+    createdBy: { ref: "users", type: mongoose.Types.ObjectId },
     purchaseId: {
       type: Number,
       required: false,
@@ -62,13 +80,23 @@ const purchaseSchema = new Schema<PurchaseSchema>(
           qty: { type: Number, required: false },
           unit: { type: String, required: false },
           price: { type: Number, required: false },
-          purchasetax: {
+          saletax: {
             tax: {
-              type: Number,
+              type: String,
               required: false,
             },
             taxable_amount: {
-              type: Number,
+              type: String,
+              required: false,
+            },
+          },
+          discount: {
+            discount_tax: {
+              type: String,
+              required: false,
+            },
+            discount_amount: {
+              type: String,
               required: false,
             },
           },
@@ -78,6 +106,10 @@ const purchaseSchema = new Schema<PurchaseSchema>(
           },
         },
       ],
+    },
+    totalAmount: {
+      type: String,
+      required: false,
     },
     paymentMode: {
       type: String,
